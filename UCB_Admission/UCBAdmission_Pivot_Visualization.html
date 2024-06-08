@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jianyuan(Andy) Hu">
+<meta name="dcterms.date" content="2024-06-08">
+
+<title>Beginner R Tutorial: Exploratory Data Analysis with UCBAdmission1973 Dataset</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="UCBAdmission_Pivot_Visualization_files/libs/clipboard/clipboard.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/quarto-html/quarto.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/quarto-html/popper.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/quarto-html/anchor.min.js"></script>
+<link href="UCBAdmission_Pivot_Visualization_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="UCBAdmission_Pivot_Visualization_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="UCBAdmission_Pivot_Visualization_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="UCBAdmission_Pivot_Visualization_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="UCBAdmission_Pivot_Visualization_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+<script src="UCBAdmission_Pivot_Visualization_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/jquery-1.11.2/jquery.min.js"></script>
+<link href="UCBAdmission_Pivot_Visualization_files/libs/jquery-ui-1.11.4/jquery-ui.min.css" rel="stylesheet">
+<script src="UCBAdmission_Pivot_Visualization_files/libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/jquery-ui-1.11.4/jquery.ui.touch-punch.min.js"></script>
+<link href="UCBAdmission_Pivot_Visualization_files/libs/c3-0.4.11/c3.min.css" rel="stylesheet">
+<script src="UCBAdmission_Pivot_Visualization_files/libs/c3-0.4.11/c3.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/d3-3.5.5/d3.v3.min.js"></script>
+<link href="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.min.css" rel="stylesheet">
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/d3_renderers.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/c3_renderers.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.cs.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.da.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.de.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.es.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.fr.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.it.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.nl.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.pl.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.pt.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.ru.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.sq.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.tr.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pivottable-2.19.0/pivot.zh.min.js"></script>
+<link href="UCBAdmission_Pivot_Visualization_files/libs/subtotal-1.10.0/subtotal.min.css" rel="stylesheet">
+<script src="UCBAdmission_Pivot_Visualization_files/libs/subtotal-1.10.0/subtotal.min.js"></script>
+<script src="UCBAdmission_Pivot_Visualization_files/libs/polyfill-0.1/polyfill.min.js"></script>
+<link href="UCBAdmission_Pivot_Visualization_files/libs/rpivotTable_style-0.1/rpivotTable.css" rel="stylesheet">
+<script src="UCBAdmission_Pivot_Visualization_files/libs/rpivotTable-binding-0.3.0/rpivotTable.js"></script>
+<link href="UCBAdmission_Pivot_Visualization_files/libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="UCBAdmission_Pivot_Visualization_files/libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#what-is-r" id="toc-what-is-r" class="nav-link active" data-scroll-target="#what-is-r">What Is R?</a></li>
+  <li><a href="#what-is-this-file" id="toc-what-is-this-file" class="nav-link" data-scroll-target="#what-is-this-file">What Is This File?</a></li>
+  <li><a href="#what-are-we-accomplishing-here" id="toc-what-are-we-accomplishing-here" class="nav-link" data-scroll-target="#what-are-we-accomplishing-here">What Are We Accomplishing Here?</a></li>
+  <li><a href="#performing-tasks-with-r-using-ucbadmission-dataset" id="toc-performing-tasks-with-r-using-ucbadmission-dataset" class="nav-link" data-scroll-target="#performing-tasks-with-r-using-ucbadmission-dataset">Performing Tasks with R Using UCBAdmission Dataset</a>
+  <ul class="collapse">
+  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">Background</a></li>
+  <li><a href="#import-libraries" id="toc-import-libraries" class="nav-link" data-scroll-target="#import-libraries">Import libraries</a></li>
+  <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">Import data</a></li>
+  <li><a href="#explore-data" id="toc-explore-data" class="nav-link" data-scroll-target="#explore-data">Explore data</a>
+  <ul class="collapse">
+  <li><a href="#create-frequency-and-relative-frequency-tables" id="toc-create-frequency-and-relative-frequency-tables" class="nav-link" data-scroll-target="#create-frequency-and-relative-frequency-tables">Create frequency and relative frequency tables</a></li>
+  <li><a href="#create-bar-plots-for-the-relative-frequency-table" id="toc-create-bar-plots-for-the-relative-frequency-table" class="nav-link" data-scroll-target="#create-bar-plots-for-the-relative-frequency-table">Create bar plots for the relative frequency table</a></li>
+  <li><a href="#create-relative-frequency-tables-for-each-department" id="toc-create-relative-frequency-tables-for-each-department" class="nav-link" data-scroll-target="#create-relative-frequency-tables-for-each-department">Create relative frequency tables for each department</a></li>
+  <li><a href="#create-a-series-of-barplot-for-relative-frequencies-of-admission-by-gender-given-a-department" id="toc-create-a-series-of-barplot-for-relative-frequencies-of-admission-by-gender-given-a-department" class="nav-link" data-scroll-target="#create-a-series-of-barplot-for-relative-frequencies-of-admission-by-gender-given-a-department">Create a series of barplot for relative frequencies of admission by gender given a department</a></li>
+  <li><a href="#a-much-much-fancier-way-to-achieve-the-same" id="toc-a-much-much-fancier-way-to-achieve-the-same" class="nav-link" data-scroll-target="#a-much-much-fancier-way-to-achieve-the-same">A much much fancier way to achieve the same:</a></li>
+  <li><a href="#bonus-note-pivot-tablepivot-chart-in-r-rpivottable-so-to-speak." id="toc-bonus-note-pivot-tablepivot-chart-in-r-rpivottable-so-to-speak." class="nav-link" data-scroll-target="#bonus-note-pivot-tablepivot-chart-in-r-rpivottable-so-to-speak.">Bonus Note: Pivot Table/Pivot Chart in R (rpivotTable), so to speak….</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#closing" id="toc-closing" class="nav-link" data-scroll-target="#closing">Closing</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Beginner R Tutorial: Exploratory Data Analysis with UCBAdmission1973 Dataset</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jianyuan(Andy) Hu </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 8, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="what-is-r" class="level1">
+<h1>What Is R?</h1>
+<p>R is ‘GNU S’, a freely available language and environment for statistical computing and graphics which provides a wide variety of statistical and graphical techniques: linear and nonlinear modelling, statistical tests, time series analysis, classification, clustering, etc. Please consult the R project homepage for further information. (https://cran.r-project.org/)</p>
+</section>
+<section id="what-is-this-file" class="level1">
+<h1>What Is This File?</h1>
+<p>This file is natively available as an html file, in other words, you should be able to open it with any modern internet browser. You won’t be able to execute any R code in the browser, but all outputs are already available to you in this document.</p>
+<p>To create this file, I used something called <a href="https://quarto.org/">Quarto Markdown Document</a>. When you execute code within the notebook, the results appear beneath the code. Quarto is an open-source scientific and technical publishing system. It allows to embed codes and outputs in the same document, fantastic for researchers, scholars and educators!</p>
+</section>
+<section id="what-are-we-accomplishing-here" class="level1">
+<h1>What Are We Accomplishing Here?</h1>
+<p>In Microsoft Excel, we can perform a series of data manipulation, exploration and visualization tasks. As a bonus and complement, this is to provide some additional exposure to one of the most popular and powerful statistical and graphical solutions, yet <strong>COMPLETELY FREE</strong>, called R! We will doing a few tasks that resemble PivotTable functions and visualize some datapoints just like what we can accomplished with Microsoft Excel, but using R.</p>
+</section>
+<section id="performing-tasks-with-r-using-ucbadmission-dataset" class="level1">
+<h1>Performing Tasks with R Using UCBAdmission Dataset</h1>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<p><strong>Name of the dataset:</strong> UCBAdmission</p>
+<p><strong>Description:</strong> Aggregate data on applicants to graduate school at Berkeley for the six largest departments in 1973 classified by admission and sex.</p>
+<p><strong>Detailed information</strong>: https://rdrr.io/r/datasets/UCBAdmissions.html</p>
+<p><strong>The official study:</strong> <a href="https://sct-prv.uab.cat/estadistica/sites/sct-prv.uab.cat.estadistica/files/3_2_Berkeley_sexBias_articleaScience.pdf">Sex Bias in Graduate Admissions: Data from Berkeley</a></p>
+</section>
+<section id="import-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="import-libraries">Import libraries</h2>
+<p>Thousands of available libraries are what make R powerful. They are voluntarily developed by enthusiasts in the R community and you guessed it, there are many many many…. many of them. Consider libraries are different add-ons that you can plug-in to your workflow to get things done faster. And yes! These libraries are free, as well!!….</p>
+<p><strong>If a library is never used on the computer before</strong>, you do need to install it first and it is super easy to do with one line of code in R. For example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("janitor") #btw, I don't really know why it is called "janitor", probably a good data cleaning tool??...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After that you can just call it when you need it. I have many installed already, so I will just call all the ones needed for this tutorial. However, if you have not already installed these libraries, be sure to install them first.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpivotTable)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="import-data" class="level2">
+<h2 class="anchored" data-anchor-id="import-data">Import data</h2>
+<p>In R environment, there are many illustrative datasets built in UCBAdmission is one of them.</p>
+<p>To import data into a tabular format, called “data frame”. In particular, we will use a “flavour” of data frame called “tibble”.</p>
+<p>Every time when you use “&lt;-” to point at something (in this case “df”), that will refer to the object you assign it to. The following command allows “df” to refer to the tibble dataframe that we just created from UCBAdmissions built-in dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(UCBAdmissions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="explore-data" class="level2">
+<h2 class="anchored" data-anchor-id="explore-data">Explore data</h2>
+<p>To see a few of top records.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Admit"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Gender"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Dept"],"name":[3],"type":["chr"],"align":["left"]},{"label":["n"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Admitted","2":"Male","3":"A","4":"512"},{"1":"Rejected","2":"Male","3":"A","4":"313"},{"1":"Admitted","2":"Female","3":"A","4":"89"},{"1":"Rejected","2":"Female","3":"A","4":"19"},{"1":"Admitted","2":"Male","3":"B","4":"353"},{"1":"Rejected","2":"Male","3":"B","4":"207"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>To see the structure of data frame:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [24 × 4] (S3: tbl_df/tbl/data.frame)
+ $ Admit : chr [1:24] "Admitted" "Rejected" "Admitted" "Rejected" ...
+ $ Gender: chr [1:24] "Male" "Male" "Female" "Female" ...
+ $ Dept  : chr [1:24] "A" "A" "A" "A" ...
+ $ n     : num [1:24] 512 313 89 19 353 207 17 8 120 205 ...</code></pre>
+</div>
+</div>
+<p>To view the entire data frame, just run the object itself</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Admit"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Gender"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Dept"],"name":[3],"type":["chr"],"align":["left"]},{"label":["n"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Admitted","2":"Male","3":"A","4":"512"},{"1":"Rejected","2":"Male","3":"A","4":"313"},{"1":"Admitted","2":"Female","3":"A","4":"89"},{"1":"Rejected","2":"Female","3":"A","4":"19"},{"1":"Admitted","2":"Male","3":"B","4":"353"},{"1":"Rejected","2":"Male","3":"B","4":"207"},{"1":"Admitted","2":"Female","3":"B","4":"17"},{"1":"Rejected","2":"Female","3":"B","4":"8"},{"1":"Admitted","2":"Male","3":"C","4":"120"},{"1":"Rejected","2":"Male","3":"C","4":"205"},{"1":"Admitted","2":"Female","3":"C","4":"202"},{"1":"Rejected","2":"Female","3":"C","4":"391"},{"1":"Admitted","2":"Male","3":"D","4":"138"},{"1":"Rejected","2":"Male","3":"D","4":"279"},{"1":"Admitted","2":"Female","3":"D","4":"131"},{"1":"Rejected","2":"Female","3":"D","4":"244"},{"1":"Admitted","2":"Male","3":"E","4":"53"},{"1":"Rejected","2":"Male","3":"E","4":"138"},{"1":"Admitted","2":"Female","3":"E","4":"94"},{"1":"Rejected","2":"Female","3":"E","4":"299"},{"1":"Admitted","2":"Male","3":"F","4":"22"},{"1":"Rejected","2":"Male","3":"F","4":"351"},{"1":"Admitted","2":"Female","3":"F","4":"24"},{"1":"Rejected","2":"Female","3":"F","4":"317"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<section id="create-frequency-and-relative-frequency-tables" class="level3">
+<h3 class="anchored" data-anchor-id="create-frequency-and-relative-frequency-tables">Create frequency and relative frequency tables</h3>
+<p>To create frequency tables by Gender and Admit. We will leverage the powerful and comprehensive data cleaning library called <a href="https://www.tidyverse.org/">tidyverse</a>. In fact, tidyverse is a collection library of a bunch of other libraries.</p>
+<p><strong>Note:</strong> “|&gt;” is called “pipe operator”. You might also have seen a variant of pipe operator like this “%&gt;%”. This operator allows the evaluated object from the current function(s) to be passed down as an input to a parameter of the next function. This is one of the great creations in R and really enables to simplify the codes and make the codes more readable. If you would like to read more about pipe operators in R, this is an excellent start: <a href="https://research.sbcs.qmul.ac.uk/r.knell/intro_R_3rd_ed/pipelines-in-r.html">Pipelines in R</a>.</p>
+<p>For example, the following code can be interpreted like this in a more human English way:</p>
+<ul>
+<li>line 1: we would like to create a new object called admit_gender_pivot, starting with df object (keep in mind that “df” is the same tibble dataframe we just created above)</li>
+<li>line 2: and then, df will be grouped by “Admit” and “Gender” columns</li>
+<li>line 3: and then, the grouped df will be summarized to a new metric (column) called “Freg_Agg”, which is to sum of values in “n” column, and we will keep the grouping</li>
+<li>line 4: and then, ungroup the summarized tibble dataframe</li>
+<li>line 5: and finally, pivot the dataframe from line 4 to be a wider dataframe, by using the values in “Admit” column to be the new column names and aggregate values from “Freq_Agg” column.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>admit_gender_pivot <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span>  </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Admit, Gender)  <span class="sc">|&gt;</span>  </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Freq_Agg =</span> <span class="fu">sum</span>(n),  <span class="at">.groups =</span> <span class="st">"keep"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Admit, <span class="at">values_from =</span> Freq_Agg)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>admit_gender_pivot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Gender"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Admitted"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Rejected"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"Female","2":"557","3":"1278"},{"1":"Male","2":"1198","3":"1493"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>To add totals, row/column titles, we use a function called “adorn_totals”, from a library called <a href="https://www.rdocumentation.org/packages/janitor/versions/2.2.0">janitor</a>, an excellent collection of helper tools to “clean up” the tables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>admit_gender_pivot_full <span class="ot">&lt;-</span> admit_gender_pivot <span class="sc">|&gt;</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_totals</span>(<span class="at">where =</span> <span class="fu">c</span>(<span class="st">"row"</span>, <span class="st">"col"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add as_tibble to enforce the output of adorn_totals to be tibble again</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>admit_gender_pivot_full</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Gender"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Admitted"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Rejected"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Total"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Female","2":"557","3":"1278","4":"1835"},{"1":"Male","2":"1198","3":"1493","4":"2691"},{"1":"Total","2":"1755","3":"2771","4":"4526"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>To see % of admission to gender total by each gender:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>admit_gender_pivot_pct <span class="ot">&lt;-</span> admit_gender_pivot <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_percentages</span>(<span class="st">"row"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># to round percentages decimal places to 2 places</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_pct_formatting</span>(<span class="at">digits =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>admit_gender_pivot_pct</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Gender"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Admitted"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Rejected"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"Female","2":"30.35%","3":"69.65%"},{"1":"Male","2":"44.52%","3":"55.48%"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</section>
+<section id="create-bar-plots-for-the-relative-frequency-table" class="level3">
+<h3 class="anchored" data-anchor-id="create-bar-plots-for-the-relative-frequency-table">Create bar plots for the relative frequency table</h3>
+<p>We start by creating an unpivoted (longer) relative frequency table. Essentially, this is the opposite of “pivot_wider”, as we will make the admission results headers to be a column by itself (Admit) and the measure (relative frequencies) will become its own column as well (Rel_Freq).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>admit_gender_pct <span class="ot">&lt;-</span> admit_gender_pivot_pct <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(Admitted, Rejected), <span class="at">names_to =</span> <span class="st">"Admit"</span>, <span class="at">values_to =</span> <span class="st">"Rel_Freq"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>admit_gender_pct</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Gender"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Admit"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Rel_Freq"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"Female","2":"Admitted","3":"30.35%"},{"1":"Female","2":"Rejected","3":"69.65%"},{"1":"Male","2":"Admitted","3":"44.52%"},{"1":"Male","2":"Rejected","3":"55.48%"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>Another great creation in R is a comprehensive graphics library <a href="https://ggplot2.tidyverse.org/">ggplot2</a>, based on <a href="https://byrneslab.net/classes/biol607/readings/wickham_layered-grammar.pdf">Layered Grammar of grahics</a>. It truly is powerful enough that it allows you to create any type of grahics, only limited by your imagination. We will use this exercise to build the basics of this grammar and ggplot2 package.</p>
+<p>I hope by this point, you really appreciate what makes R so powerful are these thoughtfully curated libraries that can just “plug and play”.</p>
+<p>There are layers when graphing with ggplot libaray.</p>
+<p>The beginning layer is to create the canvas and then the 2nd layer is to assign each axis. You won’t be able to see Gender yet, because that will be shown as different colors the graphic is actually made and we haven’t told what graphics we want to create yet. So, patience, my friends.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(admit_gender_pct, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Admit, <span class="at">y=</span>Rel_Freq, <span class="at">fill=</span>Gender))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>3rd layer is to plot the barplot for relative frequency. Now, with geom_bar, we are telling R to create a bar chart, and you will see</p>
+<p><strong>Note:</strong> the “+” sign functions just like ” |&gt; “, an operator to connect from one function to another within ggplot2 library. Just a weird dialect specifically spoken mandated by ggplot2 creators if you will.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(admit_gender_pct, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Admit, <span class="at">y=</span>Rel_Freq, <span class="at">fill=</span>Gender))<span class="sc">+</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># stat="identity" means we want to use the data values just as they are without being summarized other ways</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># position allows to specify different types of bars (stacked, dodged etc...)</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">'dodge'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>To demo manually change category colours, we can use “scale_fill_manual”</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(admit_gender_pct, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Admit, <span class="at">y=</span>Rel_Freq, <span class="at">fill=</span>Gender))<span class="sc">+</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">'dodge'</span>)<span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Female"</span> <span class="ot">=</span> <span class="st">"pink"</span>, <span class="st">"Male"</span> <span class="ot">=</span> <span class="st">"skyblue"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>To add title for the barplot</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(admit_gender_pct, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Admit, <span class="at">y=</span>Rel_Freq, <span class="at">fill=</span>Gender))<span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">'dodge'</span>)<span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Female"</span> <span class="ot">=</span> <span class="st">"pink"</span>, <span class="st">"Male"</span> <span class="ot">=</span> <span class="st">"skyblue"</span>))<span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Relative Frequency Barplot by Admit and Gender"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>To add data labels to each bar:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(admit_gender_pct, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Admit, <span class="at">y=</span>Rel_Freq, <span class="at">fill=</span>Gender))<span class="sc">+</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">'dodge'</span>)<span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> Rel_Freq), <span class="at">colour =</span> <span class="st">"orange"</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="dv">1</span>), )<span class="sc">+</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Female"</span> <span class="ot">=</span> <span class="st">"pink"</span>, <span class="st">"Male"</span> <span class="ot">=</span> <span class="st">"skyblue"</span>))<span class="sc">+</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Relative Frequency Barplot by Admit and Gender"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="create-relative-frequency-tables-for-each-department" class="level3">
+<h3 class="anchored" data-anchor-id="create-relative-frequency-tables-for-each-department">Create relative frequency tables for each department</h3>
+<p>We repeat what we have done in “creating frequency and relative frequency table” section, but for each of the department</p>
+<p>We will make an example with department A first:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>admit_gender_pivot_DpetA <span class="ot">&lt;-</span> df<span class="sc">|&gt;</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Dept<span class="sc">==</span><span class="st">"A"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Admit, Gender) <span class="sc">|&gt;</span>  </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Freq_Agg =</span> <span class="fu">sum</span>(n), <span class="at">.groups =</span> <span class="st">"keep"</span>) <span class="sc">|&gt;</span>  </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Admit, <span class="at">values_from =</span> Freq_Agg)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>admit_gender_pivot_DpetA</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Gender"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Admitted"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Rejected"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"Female","2":"89","3":"19"},{"1":"Male","2":"512","3":"313"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>Then similar to above, we will get relative frequencies.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>admit_gender_pivot_DpetA <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_percentages</span>(<span class="st">"row"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">adorn_pct_formatting</span>(<span class="at">digits =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span>  </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Gender"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Admitted"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Rejected"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"Female","2":"82.41%","3":"17.59%"},{"1":"Male","2":"62.06%","3":"37.94%"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>If you think about it, we are really are just repeating these steps above for each department for each of the filtered subset. This is where we have to ask ourselves, <strong><em>“we are programming anyways, can we automate things?”</em></strong></p>
+<p>Usually, when this question rises, the answer is “yes”!, so let’s put our thinking hat on.</p>
+<ul>
+<li><p>We want to “bundle” all of the data transform steps because they are consistent across all departments. We call this “bundle” a “function”, something that takes a input and returns an output. In fact, all of the things that you have seen thus far, like “filter”, ” group_by”, “summarize” etc… they are all functions! It’s that this time, we are writing a custome one ourselves.</p></li>
+<li><p>We want to parameterize for different department values wherever we need to call out for that particular department. This really just a list of department values.</p></li>
+<li><p>We “map” each department value as input to the same function, and then let the computer walk through the entire parameter series.</p></li>
+</ul>
+<p>Okay, enough all this talk, let’s see that in action!</p>
+<p>First, we need to create the function that does all of the data transformation and creating graphics. It sounds a lot, but we actually have all of the steps figured out, we just need to wrap them all in a function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we are creating a function called create_dept_relative_freq, which takes an input called "dept"</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>create_dept_relative_freq <span class="ot">&lt;-</span> <span class="cf">function</span>(dept){</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  admit_gender_pivot_Dpet <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span> </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this is where the "parameterize concept is applied, if we pass dept == "A" to this function, it will filter for just Dept A related rows, neat!!!</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(Dept<span class="sc">==</span>dept) <span class="sc">|&gt;</span> </span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># all of the following steps you have seen above, no surprises here</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Admit, Gender) <span class="sc">|&gt;</span>  </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">Freq_Agg =</span> <span class="fu">sum</span>(n), <span class="at">.groups =</span> <span class="st">"keep"</span>)<span class="sc">|&gt;</span> </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Admit, <span class="at">values_from =</span> Freq_Agg)<span class="sc">|&gt;</span> </span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">adorn_percentages</span>(<span class="st">"row"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">adorn_pct_formatting</span>(<span class="at">digits =</span> <span class="dv">2</span>)<span class="sc">|&gt;</span> </span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as_tibble</span>()</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># return specifies what output you would this function to yield. In this case, we would like to have the tranformed data frame of course...</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(admit_gender_pivot_Dpet)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To get a list (vector) of departments, we can get “distinct” values from Dept column and then “pull”. All of these are courtesy of “tidyverse”.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dept_list <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Dept) <span class="sc">|&gt;</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>()</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>dept_list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "A" "B" "C" "D" "E" "F"</code></pre>
+</div>
+</div>
+<p>Now, we need to have a mechanism to let R walk through all values in dept_list and pass each value to the same function. Once, again, courtesy of “tidyverse”, a function called “map” will take care of this for us… We will just chill and wait for the data frames!</p>
+<p><strong>Note:</strong> “~create_dept_relative_freq(.x)” means that we are taking each value found in dept_list object and pass them individually one after another to run the function create_dept_relative_freq. “.x” is simply the parameter placeholder for “dept” which represents one of “A”, “B”, “C”….</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(dept_list, <span class="sc">~</span><span class="fu">create_dept_relative_freq</span>(.x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+# A tibble: 2 × 3
+  Gender Admitted Rejected
+  &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   
+1 Female 82.41%   17.59%  
+2 Male   62.06%   37.94%  
+
+[[2]]
+# A tibble: 2 × 3
+  Gender Admitted Rejected
+  &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   
+1 Female 68.00%   32.00%  
+2 Male   63.04%   36.96%  
+
+[[3]]
+# A tibble: 2 × 3
+  Gender Admitted Rejected
+  &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   
+1 Female 34.06%   65.94%  
+2 Male   36.92%   63.08%  
+
+[[4]]
+# A tibble: 2 × 3
+  Gender Admitted Rejected
+  &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   
+1 Female 34.93%   65.07%  
+2 Male   33.09%   66.91%  
+
+[[5]]
+# A tibble: 2 × 3
+  Gender Admitted Rejected
+  &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   
+1 Female 23.92%   76.08%  
+2 Male   27.75%   72.25%  
+
+[[6]]
+# A tibble: 2 × 3
+  Gender Admitted Rejected
+  &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   
+1 Female 7.04%    92.96%  
+2 Male   5.90%    94.10%  </code></pre>
+</div>
+</div>
+<p>How neat!!!</p>
+</section>
+<section id="create-a-series-of-barplot-for-relative-frequencies-of-admission-by-gender-given-a-department" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-series-of-barplot-for-relative-frequencies-of-admission-by-gender-given-a-department">Create a series of barplot for relative frequencies of admission by gender given a department</h3>
+<p>Okay, now you have a bit taste of creating relative frequencies for each department, you probably wonder: since we are creating the similar graphic grammar for all of the barplots, can we extend our function so that it is capable of creating graphics as well?</p>
+<p>You betcha!!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we are creating a function called create_dept_relative_freq, which takes an input called "dept"</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>create_dept_admit_relative_freq_bar <span class="ot">&lt;-</span> <span class="cf">function</span>(dept){</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this part is exactly like what we have in create_dept_relative_freq function</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  admit_gender_barplot <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span> </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(Dept<span class="sc">==</span>dept) <span class="sc">|&gt;</span> </span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># all of the following steps you have seen above, no surprises here</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Admit, Gender) <span class="sc">|&gt;</span>  </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">Freq_Agg =</span> <span class="fu">sum</span>(n), <span class="at">.groups =</span> <span class="st">"keep"</span>) <span class="sc">|&gt;</span>  </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Admit, <span class="at">values_from =</span> Freq_Agg) <span class="sc">|&gt;</span>  </span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">adorn_percentages</span>(<span class="st">"row"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">adorn_pct_formatting</span>(<span class="at">digits =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span>  </span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(Admitted, Rejected), <span class="at">names_to =</span> <span class="st">"Admit"</span>, <span class="at">values_to =</span> <span class="st">"Rel_Freq"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># and now we are stitching with the ggplot portion for that barplot</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Admit, <span class="at">y=</span>Rel_Freq, <span class="at">fill=</span>Gender))<span class="sc">+</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">'dodge'</span>)<span class="sc">+</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> Rel_Freq), <span class="at">colour =</span> <span class="st">"orange"</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="dv">1</span>), )<span class="sc">+</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Female"</span> <span class="ot">=</span> <span class="st">"red"</span>, <span class="st">"Male"</span> <span class="ot">=</span> <span class="st">"skyblue"</span>))<span class="sc">+</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># "paste" function allows us to dynamically generate the title for the barplot. Think of it as some kind of magic glue that stick a variable or many variables after a fixed text value.</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="fu">paste</span>(<span class="st">"Relative Frequency Barplot by Admit and Gender, Dept"</span>, dept))</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># return specifies what output you would this function to yield. In this case, we would like to have the tranformed data frame of course...</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(admit_gender_barplot)</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(dept_list, create_dept_admit_relative_freq_bar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+[[2]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-21-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+[[3]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-21-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+[[4]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-21-4.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+[[5]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-21-5.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+[[6]]</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-21-6.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="a-much-much-fancier-way-to-achieve-the-same" class="level3">
+<h3 class="anchored" data-anchor-id="a-much-much-fancier-way-to-achieve-the-same">A much much fancier way to achieve the same:</h3>
+<p>This part is interesting: the relative frequency that we are seeking is each Freq out of <strong>total applicants of a particular gender to a particular Dept</strong>. Therefore, to get this subtotal in R, like before, we use “group_by” function from “tidyverse” library to find proper granularity level that we need. Then, we can simply use function called “mutate” (also from “tidyverse”) to get all of the relative frequencies that we need, by passing all of the summarize and pivot wider/longer process. <strong>“mutate”</strong> is just a go-to function to modify a tibble dataframe, such as changing values, adding a new column etc…</p>
+<p>In this case, we need to group Dept and Gender.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>df_subtotal <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span>  </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Dept, Gender) <span class="sc">|&gt;</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we are creating a new column called "Freq_subtotal"</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Freq_subtotal =</span> <span class="fu">sum</span>(n)) <span class="sc">|&gt;</span> </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df_subtotal, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Admit"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Gender"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Dept"],"name":[3],"type":["chr"],"align":["left"]},{"label":["n"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Freq_subtotal"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"Admitted","2":"Male","3":"A","4":"512","5":"825"},{"1":"Rejected","2":"Male","3":"A","4":"313","5":"825"},{"1":"Admitted","2":"Female","3":"A","4":"89","5":"108"},{"1":"Rejected","2":"Female","3":"A","4":"19","5":"108"},{"1":"Admitted","2":"Male","3":"B","4":"353","5":"560"},{"1":"Rejected","2":"Male","3":"B","4":"207","5":"560"},{"1":"Admitted","2":"Female","3":"B","4":"17","5":"25"},{"1":"Rejected","2":"Female","3":"B","4":"8","5":"25"},{"1":"Admitted","2":"Male","3":"C","4":"120","5":"325"},{"1":"Rejected","2":"Male","3":"C","4":"205","5":"325"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>One more inch to go to create the Rel_Freq itself</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>df_rf <span class="ot">&lt;-</span> df_subtotal <span class="sc">%&gt;%</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Dept, Gender) <span class="sc">|&gt;</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># we are creating a new column called "Freq_subtotal", notice how group_by enables to create the same subtotals as long as the values are the same for Dept and Gender, but not the same by Admit values</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Freq_subtotal =</span> <span class="fu">sum</span>(n), </span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># we are creating the relative frequency column and round the decimal places to 4 decimal places</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Rel_Freq =</span> <span class="fu">round</span>(n<span class="sc">/</span>Freq_subtotal, <span class="at">digits =</span> <span class="dv">4</span>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> </span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df_rf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["Admit"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Gender"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Dept"],"name":[3],"type":["chr"],"align":["left"]},{"label":["n"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Freq_subtotal"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Rel_Freq"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"Admitted","2":"Male","3":"A","4":"512","5":"825","6":"0.6206"},{"1":"Rejected","2":"Male","3":"A","4":"313","5":"825","6":"0.3794"},{"1":"Admitted","2":"Female","3":"A","4":"89","5":"108","6":"0.8241"},{"1":"Rejected","2":"Female","3":"A","4":"19","5":"108","6":"0.1759"},{"1":"Admitted","2":"Male","3":"B","4":"353","5":"560","6":"0.6304"},{"1":"Rejected","2":"Male","3":"B","4":"207","5":"560","6":"0.3696"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>I will also introduce a “fancy grammar” enabled from ggplot2, called “facet”. “facet” allows to create same graphics by distinct values of a data dimension and fit them all in the same graphic, instead of multiple individual graphics. This is a perfect use case for our scenario and enables to view all 6 departments side by side. I hope you get sense of the powerful graphic capability from R, particularly from ggplot2. This is something basic data analysis tool like Microsoft Excel not capable of easily accomplish.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_rf, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x=</span>Admit, <span class="at">y=</span>Rel_Freq, <span class="at">fill=</span>Gender))<span class="sc">+</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>)<span class="sc">+</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Female"</span> <span class="ot">=</span> <span class="st">"pink"</span>, <span class="st">"Male"</span> <span class="ot">=</span> <span class="st">"skyblue"</span>))<span class="sc">+</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Dept)<span class="sc">+</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Relative Frequency Barplot by Admit and Gender, Dept"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="UCBAdmission_Pivot_Visualization_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="bonus-note-pivot-tablepivot-chart-in-r-rpivottable-so-to-speak." class="level3">
+<h3 class="anchored" data-anchor-id="bonus-note-pivot-tablepivot-chart-in-r-rpivottable-so-to-speak.">Bonus Note: Pivot Table/Pivot Chart in R (rpivotTable), so to speak….</h3>
+<p>There is also a simple but gradually deprecated application to recreate the “pivot” experience from Microsoft Excel. This is the courtesy of “rpivotTable” library. It allows to drag and drop columns and to quickly create simple calculations. Feel free to try the following example yourself.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rpivotTable</span>(<span class="at">data =</span> df_rf, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"Dept"</span>, <span class="st">"Admit"</span>), <span class="at">rows =</span> <span class="st">"Gender"</span>, <span class="at">vals =</span> <span class="st">"Rel_Freq"</span>, <span class="at">aggregatorName =</span> <span class="st">"Sum"</span>, <span class="at">rendererName =</span> <span class="st">"Bar Chart"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div id="htmlwidget-c2e1b5b22012c9c9c2b8" style="width:100%;height:487px;" class="rpivotTable html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c2e1b5b22012c9c9c2b8">{"x":{"data":{"Admit":["Admitted","Rejected","Admitted","Rejected","Admitted","Rejected","Admitted","Rejected","Admitted","Rejected","Admitted","Rejected","Admitted","Rejected","Admitted","Rejected","Admitted","Rejected","Admitted","Rejected","Admitted","Rejected","Admitted","Rejected"],"Gender":["Male","Male","Female","Female","Male","Male","Female","Female","Male","Male","Female","Female","Male","Male","Female","Female","Male","Male","Female","Female","Male","Male","Female","Female"],"Dept":["A","A","A","A","B","B","B","B","C","C","C","C","D","D","D","D","E","E","E","E","F","F","F","F"],"n":[512,313,89,19,353,207,17,8,120,205,202,391,138,279,131,244,53,138,94,299,22,351,24,317],"Freq_subtotal":[825,825,108,108,560,560,25,25,325,325,593,593,417,417,375,375,191,191,393,393,373,373,341,341],"Rel_Freq":[0.6206,0.3794,0.8241000000000001,0.1759,0.6304,0.3696,0.68,0.32,0.3692,0.6308,0.3406,0.6594,0.3309,0.6691,0.3493,0.6506999999999999,0.2775,0.7225,0.2392,0.7608,0.059,0.9409999999999999,0.0704,0.9296]},"params":{"rows":["Gender"],"cols":["Dept","Admit"],"aggregatorName":["Sum"],"vals":["Rel_Freq"],"rendererName":["Bar Chart"]},"locale":"en","subtotals":false},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="closing" class="level1">
+<h1>Closing</h1>
+<p><strong>That’s it for this session… I hope you enjoy the content the same as much as I write it. Have a great day!!!</strong></p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
