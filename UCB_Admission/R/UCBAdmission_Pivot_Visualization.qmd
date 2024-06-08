@@ -7,7 +7,7 @@ format:
     theme: "Cosmo"
     toc: TRUE
     toc-location: left
-    fontsize: "12"
+    fontsize: "14"
     code-fold: false
     df-print: paged
     embed-resources: true
@@ -53,10 +53,9 @@ Thousands of available libraries are what make R powerful. They are voluntarily 
 After that you can just call it when you need it. I have many installed already, so I will just call all the ones needed for this tutorial. However, if you have not already installed these libraries, be sure to install them first.
 
 ```{r, message=FALSE, warning=FALSE}
-library(janitor)
 library(tidyverse)
+library(janitor)
 library(ggplot2)
-library(rpivotTable)
 ```
 
 ## Import data
@@ -349,14 +348,6 @@ ggplot(df_rf, mapping = aes(x=Admit, y=Rel_Freq, fill=Gender))+
   scale_fill_manual(values = c("Female" = "pink", "Male" = "skyblue"))+
   facet_wrap(~ Dept)+
   ggtitle("Relative Frequency Barplot by Admit and Gender, Dept")
-```
-
-### Bonus Note: Pivot Table/Pivot Chart in R (rpivotTable), so to speak....
-
-There is also a simple but gradually deprecated application to recreate the "pivot" experience from Microsoft Excel. This is the courtesy of "rpivotTable" library. It allows to drag and drop columns and to quickly create simple calculations. Feel free to try the following example yourself. 
-
-```{r}
-rpivotTable(data = df_rf, cols = c("Dept", "Admit"), rows = "Gender", vals = "Rel_Freq", aggregatorName = "Sum", rendererName = "Bar Chart")
 ```
 
 # Closing
