@@ -3,14 +3,7 @@ title: "Beginner R Tutorial: Exploratory Data Analysis with UCBAdmission1973 Dat
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 author: Jianyuan(Andy) Hu
 format: 
-  html:
-    theme: "Cosmo"
-    toc: TRUE
-    toc-location: left
-    fontsize: "12"
-    code-fold: false
-    df-print: paged
-    embed-resources: true
+  ipynb
     
 ---
 
@@ -349,14 +342,6 @@ ggplot(df_rf, mapping = aes(x=Admit, y=Rel_Freq, fill=Gender))+
   scale_fill_manual(values = c("Female" = "pink", "Male" = "skyblue"))+
   facet_wrap(~ Dept)+
   ggtitle("Relative Frequency Barplot by Admit and Gender, Dept")
-```
-
-### Bonus Note: Pivot Table/Pivot Chart in R (rpivotTable), so to speak....
-
-There is also a simple but gradually deprecated application to recreate the "pivot" experience from Microsoft Excel. This is the courtesy of "rpivotTable" library. It allows to drag and drop columns and to quickly create simple calculations. Feel free to try the following example yourself. 
-
-```{r}
-rpivotTable(data = df_rf, cols = c("Dept", "Admit"), rows = "Gender", vals = "Rel_Freq", aggregatorName = "Sum", rendererName = "Bar Chart")
 ```
 
 # Closing
