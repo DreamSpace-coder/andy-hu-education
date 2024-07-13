@@ -1,0 +1,75 @@
+---
+title: "Beginner R Tutorial: Canadian Population Census 2021"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+author: Jianyuan(Andy) Hu
+format: 
+  html:
+    theme: "Cosmo"
+    toc: TRUE
+    toc-location: left
+    fontsize: "14"
+    code-fold: false
+    df-print: paged
+    embed-resources: true
+---
+
+# What Is This File?
+
+This file is natively available as an html file, in other words, you should be able to open it with any modern internet browser. The source file is something called [Quarto Markdown Document](https://quarto.org/). When you execute code within the notebook, the results appear beneath the code. Quarto is an open-source scientific and technical publishing system. It allows to embed codes and outputs in the same document, fantastic for researchers, scholars and educators!
+
+# What Are We Accomplishing Here?
+
+We are exploring and cleaning Canadian Population Census data using R. This content is based on the my previous tutorial: "Beginner R Tutorial: Exploratory Data Analysis with UCBAdmission1973 Dataset".
+
+In particular, we will use "Census of Population: Public Use Microdata Files". This will give you a very good sense what a typical workflow of utilizing survey data for data analysis involves. This data source also reflects the golden standard of publishing datasets. The dataset itself is well structured. It has a well documented mthodologies of data collection and data dictioary for every end users. 
+
+To that end, I must give fill credit and a sincere shout-out to Statistics Canada for making this record level data available in a secure and ananomized way such that educators and researchers can make a good of use with ease. 
+
+
+
+# Performing Tasks with R Using UCBAdmission Dataset
+
+## Background
+
+**Name of the dataset:** Individuals file, 2021 Census of Population
+
+**Description:** Census Public Use Microdata Files (PUMFs) provide access to non-aggregated data covering a sample of the Canadian population. It is a comprehensive social, demographic and economic database about Canada, its people, and contains a wealth of characteristics on the population.
+
+**Detailed information**: https://www150.statcan.gc.ca/n1/pub/98m0001x/index-eng.htm 
+
+**The official study:** [Sex Bias in Graduate Admissions: Data from Berkeley](https://sct-prv.uab.cat/estadistica/sites/sct-prv.uab.cat.estadistica/files/3_2_Berkeley_sexBias_articleaScience.pdf)
+
+## Import libraries
+
+Same as before, we will begin by importing essential libraries. Once again, if you run into any packages not installed yet, make sure to install the packages first with "install.packages()". For example:
+```{r eval=FALSE}
+install.packages("here")
+```
+
+Here are the libraries that we will import and use:
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+## Import Data
+
+```{r}
+census2021 <- here("CanadianPopCensus", "Data", "cen21_hier_rec21", "data_donnees_2021_hier.csv") |>
+  read_csv(col_types = cols(.default = "c"))
+```
+
+```{r}
+head(census2021, n = 20)
+```
+
+With first glance, the data set looks positively robotic and we have no clue what all these numbers in each column means. 
+
+This is where we need to leverage the user guide
+
+```{r}
+
+
+```
+

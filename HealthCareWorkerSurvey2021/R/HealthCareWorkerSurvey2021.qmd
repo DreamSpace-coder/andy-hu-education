@@ -1,0 +1,101 @@
+---
+title: "R Tutorial: Exploratory Data Analysis-SHCWEP"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+author: Jianyuan(Andy) Hu
+format: 
+  html:
+    theme: "Cosmo"
+    toc: TRUE
+    toc-location: left
+    fontsize: "14"
+    code-fold: false
+    df-print: paged
+    embed-resources: true
+---
+
+
+
+# What Are We Accomplishing Here?
+
+We are exploring and cleaning Survey on Health Care Workers' Experiences During the Pandemic (SHCWEP) data using R. 
+
+This content requires some working knowledge about R. If you feel the need to go through more basic details, please visit my previous tutorial: "Beginner R Tutorial: Exploratory Data Analysis with UCBAdmission1973 Dataset".
+
+# Perform Exploratory Data Analysis (EDA)
+
+## Background
+
+**Name of the dataset:** Survey on Health Care Workers' Experiences During the Pandemic (SHCWEP)
+
+**Description:** The purpose of this survey is to understand the impact of the COVID-19 pandemic on health care workers in Canada.
+
+**Detailed information**: https://www23.statcan.gc.ca/imdb/p2SV.pl?Function=getSurvey&SDDS=5362. 
+
+## Import Libraries
+
+```{r}
+library(tidyverse)
+library(here)
+```
+## Import Data
+
+### Dealing with CSV files 
+
+One of the most powerful aspects about using R is: it can import/read in pretty much all popular formats of data. The one we have here from SHCWEP is formatted as ".csv". This, "csv", which stands for "commonly separated value", is a quite common popular format. You don't need any special software to open it. You can open it with a simple text editor (such as Notepad in Windows OS). All operating systems carry some kind of text edit solution. What we are trying to do here is import the data from the csv file to our current R computing session, so that we can use the rest of R magics to perform all types of tasks on it. 
+
+To import csv data we can use a library called "readr", which is included as part of tidyverse. In particular, we use a function called "read_csv". For this function to work, we need to it a few key things:
+
+1. file: where to find our "csv" data file.
+2. col_names: whether the dataset comes with column names (also called "headers")
+3. col_types: data types of each column. (If you don't know all the data types you can default it to "character" to be safe. My personal experiences tell me that letting computers to figure the data types out all by itself isn't always a good strategy.)
+
+There are many other things that you can sepcify with read_csv(). You can find out more about the library and function here: [readr](https://readr.tidyverse.org/) and [read_csv](https://readr.tidyverse.org/reference/read_delim.html)
+
+### here() We Go
+
+There is one more handy tool that I should introduce before we officially start. Earlier, we were talking about telling read_csv() where to find data, and there is a very cool tool to make it very easy to do, introducing library [here](https://here.r-lib.org/). 
+
+You probably wonder, if we are talking about file path, we can just specify by typing it out like this: "C:/User/AndyHu/Desktop/stuff/andy-hu-education/Healthcare_worker_survey2021/Data/in/shcwep-5362-E-2022_F1.csv" (in Windows), why involve some additional library?
+
+Well, you kind of already see the problems:
+
+1. If and when we need to move our project folder "andy-hu-education" somewhere else, you need to recode this path every time.
+2. Good luck using this file path in a different operating system like macOS!! (because macOS uses a different type of "slash" character...)
+
+That's what library "here" can help with. It has a nice function called, guess what, "here()". It traces the project folder and complete that part of the file path for you, IF you create a beacon for it. This beacon is usually named with extension called ".Rproj". It is called R project file. In this case, I set up a R project file namely, "andy-hu-education.Rproj" at ""C:/User/AndyHu/Desktop/stuff/andy-hu-education". And then if you just run the function, it looks like this:
+
+```{r}
+here()
+```
+
+So this solves the painpoint number 1 above. 
+
+Good things don't just stop "here" (pun intended), if you need to specify subfolders or files within this working directory, you don't need to deal with splash symbols anymore. This makes the project much more portable across different OSs, solving painpoint 2 above. For example,
+
+```{r}
+here("HealthCareWorkerSurvey2021", "Data", "in", "shcwep-5362-E-2022_F1.csv")
+```
+### Import Survey Data
+
+Now, let's put all of these together and see how they work. 
+
+```{r}
+# here() allows dynamic file path and the "|>" puts output of here() right into the first argument of the next function read_csv(), which is "file"...
+data_raw <- here("HealthCareWorkerSurvey2021", "Data", "in", "shcwep-5362-E-2022_F1.csv") |> 
+  # cols(.default = "c) is to default all column types as "character"
+  read_csv(col_names = TRUE, col_types = cols(.default = "c"))
+
+# glimpse() allows us to preview data structure and some values of each column 
+glimpse(data_raw)
+```
+
+Wola, it works! It looks pretty overwhelming because there are more than 150 columns in this dataset, but welcome to the real world of data. Things can get large and complicated quickly. This actually speaks of the need of knowing and using a professional data processing tool like R.
+
+```{r}
+statcan_download_data("13-25-0006", "eng")
+```
+
+```{r}
+statcan_search("Survey on Health Care", "eng")
+```
+

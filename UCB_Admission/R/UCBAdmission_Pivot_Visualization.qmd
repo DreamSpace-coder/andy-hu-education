@@ -20,7 +20,7 @@ R is ‘GNU S’, a freely available language and environment for statistical co
 
 # What Is This File?
 
-This file is natively available as an html file, in other words, you should be able to open it with any modern internet browser. You won't be able to execute any R code in the browser, but all outputs are already available to you in this document.
+This file can be rendered as an html file. With HTML format, you should be able to open it with any modern internet browser. You won't be able to execute any R code in the browser, but all outputs are already available to you in this document.
 
 To create this file, I used something called [Quarto Markdown Document](https://quarto.org/). When you execute code within the notebook, the results appear beneath the code. Quarto is an open-source scientific and technical publishing system. It allows to embed codes and outputs in the same document, fantastic for researchers, scholars and educators!
 
@@ -94,7 +94,7 @@ df
 
 To create frequency tables by Gender and Admit. We will leverage the powerful and comprehensive data cleaning library called [tidyverse](https://www.tidyverse.org/). In fact, tidyverse is a collection library of a bunch of other libraries.
 
-**Note:** "\|\>" is called "pipe operator". You might also have seen a variant of pipe operator like this "%\>%". This operator allows the evaluated object from the current function(s) to be passed down as an input to a parameter of the next function. This is one of the great creations in R and really enables to simplify the codes and make the codes more readable. If you would like to read more about pipe operators in R, this is an excellent start: [Pipelines in R](https://research.sbcs.qmul.ac.uk/r.knell/intro_R_3rd_ed/pipelines-in-r.html).
+**Note:** "\|\>" is called "pipe operator". You might also have seen a variant of pipe operator like this "%\>%". This operator allows the evaluated object from the current function(s) to be passed down as an input to a parameter of the next function. This is one of the great creations in R and really enables to simplify the codes and make the codes procedural and therefore, more readable. If you would like to read more about pipe operators in R, this is an excellent start: [Pipelines in R](https://research.sbcs.qmul.ac.uk/r.knell/intro_R_3rd_ed/pipelines-in-r.html).
 
 For example, the following code can be interpreted like this in a more human English way:
 
