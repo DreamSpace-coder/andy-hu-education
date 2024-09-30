@@ -52,6 +52,9 @@ Illustration of common join types:
 -   right join
 -   outer join
 -   union ("stacking")
+- full (outer) join 
+
+*Note: full join is not available for all SQL dialects. It is a combination of left join + union + right join*
 
 
 
@@ -276,7 +279,11 @@ ORDER BY departments.department_number
 
 ## Union
 
-This is essentially stacking different intermediate table results one on top of another: - Each result set must return the same number of columns. - The corresponding columns in each result set must have compatible data types. - The column names in the final result set are taken from the first SELECT clause.
+This is essentially stacking different intermediate table results one on top of another: 
+
+- Each result set must return the same number of columns. 
+- The corresponding columns in each result set must have compatible data types. 
+- The column names in the final result set are taken from the first SELECT clause.
 
 ```{sql}
 SELECT 'Active' AS source, 
@@ -295,6 +302,34 @@ SELECT 'Paid' AS source,
 FROM ex.paid_invoices
 WHERE invoice_date >= '2022-06-01'
 ORDER BY invoice_total DESC
+```
+
+## Full Outer Join
+
+A combination of left outer join and right outer join.
+
+There is no keywords in MySQL to do full outer join directly. Other SQL dialects might have (e.g. T-SQL has FULL (OUTER) JOIN)
+
+in MySQL it is literally a UNION of LEFT JOIN set and RIGHT JOIN set
+
+```{sql}
+SELECT department_name AS dept_name,
+        d.department_number AS d_dept_no,
+        e.department_number AS e_dept_no, last_name
+FROM ex.departments d 
+     LEFT JOIN ex.employees e 
+     ON d.department_number = e.department_number
+
+UNION
+
+SELECT department_name AS dept_name,
+       d.department_number AS d_dept_no,
+       e.department_number AS e_dept_no, last_name
+FROM ex.departments d 
+    RIGHT JOIN ex.employees e 
+    ON d.department_number = e.department_number
+
+ORDER BY dept_name
 ```
 
 
