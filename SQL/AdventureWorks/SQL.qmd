@@ -1,0 +1,48 @@
+---
+title: "CTesting SQL Quarto"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+author: Jianyuan(Andy) Hu
+format: 
+  html:
+    theme: "Cosmo"
+    toc: TRUE
+    toc-location: left
+    fontsize: "14"
+    code-fold: false
+    df-print: paged
+    embed-resources: true
+---
+
+```{r}
+library(odbc)
+library(DBI)
+conn <- dbConnect(
+  drv = odbc(),
+  dsn = "Local Teaching ANSI MySQL84"
+)
+
+# "https://yihui.org/knitr/options/"
+library(knitr)
+opts_chunk$set(connection = conn)
+
+dbDisconnect(conn)
+```
+
+```{sql}
+SELECT *
+from world.city
+```
+
+
+```{sql}
+SELECT * 
+FROM ap.invoices
+LIMIT 10
+```
+
+
+```{sql}
+SELECT *
+FROM world.city
+```
+

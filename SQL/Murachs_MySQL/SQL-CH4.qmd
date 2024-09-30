@@ -1,0 +1,304 @@
+---
+title: "Retrieve Data from 2 or More Tables"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+author: Jianyuan(Andy) Hu
+format: 
+  html:
+    # https://github.com/quarto-dev/quarto-cli/issues/6645
+    # darkly and arrow seems work well for SQL documents
+    theme: darkly
+    highlight-style: arrow
+    toc: TRUE
+    toc-location: left
+    fontsize: "14"
+    code-fold: false
+    df-print: paged
+    embed-resources: true
+---
+
+```{r, echo=FALSE, warning=FALSE, results='hide'}
+library(odbc)
+library(DBI)
+conn <- dbConnect(
+  drv = odbc(),
+  dsn = "Local Teaching MySQL84",
+  database = "ap"
+)
+
+# "https://yihui.org/knitr/options/"
+library(knitr)
+opts_chunk$set(connection = conn)
+# row.print works for R chucks, max.print works for SQL chucks
+opts_chunk$set(max.print = 15)
+```
+
+# Reference
+
+This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+
+Default database in this document is "ap".
+
+Other databases included in the simulation MySQL server:
+
+-   om
+-   ex
+
+# Join Logic
+
+Illustration of common join types:
+
+-   inner join
+-   left join
+-   right join
+-   outer join
+-   union ("stacking")
+
+
+
+![SQL Join Types](Pictures/sqlJoins_7.png) [Source](https://www.atlassian.com/data/sql/sql-join-types-explained-visually)
+
+# Inner Join
+
+tables overview
+
+```{sql}
+SELECT *
+FROM invoices
+ORDER BY invoice_number
+LIMIT 10
+```
+
+```{sql}
+SELECT *
+FROM vendors 
+ORDER BY vendor_name
+LIMIT 10
+```
+
+Explicit (INNER JOIN)
+
+```{sql}
+SELECT invoice_number, vendor_name
+FROM vendors INNER JOIN invoices
+    ON vendors.vendor_id = invoices.vendor_id
+ORDER BY invoice_number
+LIMIT 10
+```
+
+Compare to the above:
+
+-   table aliases now used
+-   just JOIN, instead of full INNER JOIN, now used
+
+```{sql}
+SELECT invoice_number, vendor_name, invoice_due_date,
+    invoice_total - payment_total - credit_total
+    AS balance_due
+FROM vendors v JOIN invoices i
+    ON v.vendor_id = i.vendor_id
+WHERE invoice_total - payment_total - credit_total > 0
+ORDER BY invoice_due_date DESC
+```
+
+Compare to the above:
+
+-   alias now refers to a table from a different database
+
+```{sql}
+SELECT vendor_name, customer_last_name,
+    customer_first_name, vendor_state AS state,
+    vendor_city AS city
+FROM vendors v
+    JOIN om.customers c
+    ON v.vendor_zip_code = c.customer_zip
+ORDER BY state, city
+```
+
+Implicit joins (WHERE clause instead of ON clause)
+
+```{sql}
+SELECT invoice_number, vendor_name
+FROM vendors v, invoices i
+WHERE v.vendor_id = i.vendor_id
+ORDER BY invoice_number
+LIMIT 10
+```
+
+Implicit joins with (USING keyword), results identical as the above.
+
+```{sql}
+SELECT invoice_number, vendor_name
+FROM vendors 
+    JOIN invoices USING (vendor_id)
+ORDER BY invoice_number
+```
+
+Implicit joins with (USING keyword), results identical as the above.
+
+-   use inner join
+-   use columns of same names from the tables
+-   MySQL, yes, but not for all SQL dialects
+
+```{sql}
+SELECT invoice_number, vendor_name
+FROM vendors 
+    NATURAL JOIN invoices
+ORDER BY invoice_number
+```
+
+Join on multiple columns ("combo join", join based on combination of columns/keys)
+
+table customers overview:
+
+```{sql}
+SELECT *
+FROM om.customers
+```
+
+```{sql}
+SELECT *
+FROM ex.employees
+```
+
+-   "Are there any customers and employees with the same first and last name?"
+
+```{sql}
+SELECT customer_first_name, customer_last_name
+FROM om.customers c JOIN ex.employees e 
+    ON c.customer_first_name = e.first_name 
+   AND c.customer_last_name = e.last_name
+```
+
+self join:
+
+-   must use alias to avoid recycling same table reference
+
+-   "What are the vendors that in the same city and state?"
+
+```{sql, max.print = 15}
+SELECT DISTINCT v1.vendor_name, v1.vendor_city, 
+    v1.vendor_state
+FROM vendors v1 JOIN vendors v2
+    ON v1.vendor_city = v2.vendor_city AND
+       v1.vendor_state = v2.vendor_state AND
+       v1.vendor_name <> v2.vendor_name
+ORDER BY v1.vendor_state, v1.vendor_city
+```
+
+# Outer Join
+
+This includes:
+
+-   left join
+-   right join
+-   full outer join
+
+tables overview
+
+```{sql}
+SELECT *
+FROM ex.departments
+LIMIT 10
+```
+
+```{sql}
+SELECT *
+FROM ex.employees 
+LIMIT 10
+```
+
+```{sql}
+SELECT *
+FROM ex.projects 
+LIMIT 10
+```
+
+## Left Join
+
+```{sql}
+SELECT department_name, last_name, project_number
+FROM ex.departments d
+    LEFT JOIN ex.employees e
+        ON d.department_number = e.department_number
+    LEFT JOIN ex.projects p
+        ON e.employee_id = p.employee_id
+ORDER BY department_name, last_name
+```
+
+## Right Join
+
+```{sql}
+SELECT department_name, e.department_number, last_name
+FROM ex.departments d 
+    RIGHT JOIN ex.employees e
+    ON d.department_number = e.department_number
+ORDER BY department_name
+```
+
+combine different join types:
+
+```{sql}
+SELECT department_name, last_name, project_number
+FROM ex.departments d
+    JOIN ex.employees e
+        ON d.department_number = e.department_number
+    LEFT JOIN ex.projects p
+        ON e.employee_id = p.employee_id
+ORDER BY department_name, last_name
+```
+
+## Cross Join
+
+creates all combinations of rows from different tables.
+
+tables overview:
+
+```{sql}
+SELECT *
+FROM ex.departments
+LIMIT 10
+```
+
+```{sql}
+SELECT *
+FROM ex.employees 
+LIMIT 10
+```
+
+cross join:
+
+```{sql}
+SELECT departments.department_number, department_name,
+    employee_id, last_name
+FROM ex.departments CROSS JOIN ex.employees
+ORDER BY departments.department_number
+```
+
+## Union
+
+This is essentially stacking different intermediate table results one on top of another: - Each result set must return the same number of columns. - The corresponding columns in each result set must have compatible data types. - The column names in the final result set are taken from the first SELECT clause.
+
+```{sql}
+SELECT 'Active' AS source, 
+  invoice_number, 
+  invoice_date, 
+  invoice_total
+FROM ex.active_invoices
+WHERE invoice_date >= '2022-06-01'
+
+UNION
+
+SELECT 'Paid' AS source, 
+  invoice_number, 
+  invoice_date, 
+  invoice_total
+FROM ex.paid_invoices
+WHERE invoice_date >= '2022-06-01'
+ORDER BY invoice_total DESC
+```
+
+
+```{r, echo=FALSE}
+dbDisconnect(conn)
+```
+
