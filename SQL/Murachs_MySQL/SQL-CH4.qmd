@@ -172,13 +172,43 @@ FROM om.customers c JOIN ex.employees e
    AND c.customer_last_name = e.last_name
 ```
 
-self join:
+## A Somewhat Special Example - Self Join
+
+To make self-join work:
 
 -   must use alias to avoid recycling same table reference
 
--   "What are the vendors that in the same city and state?"
+-   "In those cities where more than 1 vendors reside, what are the OTHER vendors that in the same city and state?"
 
-```{sql, max.print = 15}
+
+Explore the vendor table:
+
+```{sql}
+SELECT *
+FROM vendors v1
+ORDER BY v1.vendor_id, v1.vendor_state, v1.vendor_city
+```
+
+
+Step 1: simple self-joining based on city and state of vendor
+```{sql}
+SELECT *
+FROM vendors v1 JOIN vendors v2
+    ON v1.vendor_city = v2.vendor_city AND
+       v1.vendor_state = v2.vendor_state
+ORDER BY v1.vendor_id, v1.vendor_state, v1.vendor_city
+```
+Unequal join to remove the vendor itself, so that the rest of the vendors are left in the result:
+```{sql}
+SELECT *
+FROM vendors v1 JOIN vendors v2
+    ON v1.vendor_city = v2.vendor_city AND
+       v1.vendor_state = v2.vendor_state AND
+       v1.vendor_name <> v2.vendor_name
+ORDER BY v1.vendor_id, v1.vendor_state, v1.vendor_city
+```
+Take distinct values of what's left in the "left table". These are the other vendors in the same cities and states.
+```{sql}
 SELECT DISTINCT v1.vendor_name, v1.vendor_city, 
     v1.vendor_state
 FROM vendors v1 JOIN vendors v2

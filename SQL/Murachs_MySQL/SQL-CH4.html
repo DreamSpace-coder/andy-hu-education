@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jianyuan(Andy) Hu">
-<meta name="dcterms.date" content="2024-09-30">
+<meta name="dcterms.date" content="2024-10-01">
 
 <title>Retrieve Data from 2 or More Tables</title>
 <style>
@@ -4299,7 +4299,10 @@ window.onload = function() {
   <ul>
   <li><a href="#reference" id="toc-reference" class="nav-link active" data-scroll-target="#reference">Reference</a></li>
   <li><a href="#join-logic" id="toc-join-logic" class="nav-link" data-scroll-target="#join-logic">Join Logic</a></li>
-  <li><a href="#inner-join" id="toc-inner-join" class="nav-link" data-scroll-target="#inner-join">Inner Join</a></li>
+  <li><a href="#inner-join" id="toc-inner-join" class="nav-link" data-scroll-target="#inner-join">Inner Join</a>
+  <ul class="collapse">
+  <li><a href="#a-somewhat-special-example---self-join" id="toc-a-somewhat-special-example---self-join" class="nav-link" data-scroll-target="#a-somewhat-special-example---self-join">A Somewhat Special Example - Self Join</a></li>
+  </ul></li>
   <li><a href="#outer-join" id="toc-outer-join" class="nav-link" data-scroll-target="#outer-join">Outer Join</a>
   <ul class="collapse">
   <li><a href="#left-join" id="toc-left-join" class="nav-link" data-scroll-target="#left-join">Left Join</a></li>
@@ -4334,7 +4337,7 @@ window.onload = function() {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 30, 2024</p>
+      <p class="date">October 1, 2024</p>
     </div>
   </div>
   
@@ -5549,19 +5552,1194 @@ window.onload = function() {
 </table>
 </div>
 </div>
-<p>self join:</p>
+<section id="a-somewhat-special-example---self-join" class="level2">
+<h2 class="anchored" data-anchor-id="a-somewhat-special-example---self-join">A Somewhat Special Example - Self Join</h2>
+<p>To make self-join work:</p>
 <ul>
 <li><p>must use alias to avoid recycling same table reference</p></li>
-<li><p>“What are the vendors that in the same city and state?”</p></li>
+<li><p>“In those cities where more than 1 vendors reside, what are the OTHER vendors that in the same city and state?”</p></li>
 </ul>
+<p>Explore the vendor table:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> v1.vendor_name, v1.vendor_city, </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    v1.vendor_state</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors v1 <span class="kw">JOIN</span> vendors v2</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> v1.vendor_city <span class="op">=</span> v2.vendor_city <span class="kw">AND</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>       v1.vendor_state <span class="op">=</span> v2.vendor_state <span class="kw">AND</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>       v1.vendor_name <span class="op">&lt;&gt;</span> v2.vendor_name</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> v1.vendor_state, v1.vendor_city</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors v1</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> v1.vendor_id, v1.vendor_state, v1.vendor_city</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<colgroup>
+<col style="width: 4%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 8%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 6%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_id</th>
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">vendor_address1</th>
+<th style="text-align: left;">vendor_address2</th>
+<th style="text-align: left;">vendor_city</th>
+<th style="text-align: left;">vendor_state</th>
+<th style="text-align: left;">vendor_zip_code</th>
+<th style="text-align: left;">vendor_phone</th>
+<th style="text-align: left;">vendor_contact_last_name</th>
+<th style="text-align: left;">vendor_contact_first_name</th>
+<th style="text-align: right;">default_terms_id</th>
+<th style="text-align: right;">default_account_number</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">US Postal Service</td>
+<td style="text-align: left;">Attn: Supt. Window Services</td>
+<td style="text-align: left;">PO Box 7005</td>
+<td style="text-align: left;">Madison</td>
+<td style="text-align: left;">WI</td>
+<td style="text-align: left;">53707</td>
+<td style="text-align: left;">(800) 555-1205</td>
+<td style="text-align: left;">Alberto</td>
+<td style="text-align: left;">Francesco</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">552</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">National Information Data Ctr</td>
+<td style="text-align: left;">PO Box 96621</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20120</td>
+<td style="text-align: left;">(301) 555-8950</td>
+<td style="text-align: left;">Irvin</td>
+<td style="text-align: left;">Ania</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">540</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Register of Copyrights</td>
+<td style="text-align: left;">Library Of Congress</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20559</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Liana</td>
+<td style="text-align: left;">Lukas</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">403</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">1990 Westwood Blvd Ste 260</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90025</td>
+<td style="text-align: left;">(800) 555-8725</td>
+<td style="text-align: left;">Quinn</td>
+<td style="text-align: left;">Kenzie</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">Newbrige Book Clubs</td>
+<td style="text-align: left;">3000 Cindel Drive</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">NJ</td>
+<td style="text-align: left;">07882</td>
+<td style="text-align: left;">(800) 555-9980</td>
+<td style="text-align: left;">Marks</td>
+<td style="text-align: left;">Michelle</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">394</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">California Chamber Of Commerce</td>
+<td style="text-align: left;">3255 Ramos Cir</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">95827</td>
+<td style="text-align: left;">(916) 555-6670</td>
+<td style="text-align: left;">Mauro</td>
+<td style="text-align: left;">Anton</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">Towne Advertiser’s Mailing Svcs</td>
+<td style="text-align: left;">Kevin Minder</td>
+<td style="text-align: left;">3441 W Macarthur Blvd</td>
+<td style="text-align: left;">Santa Ana</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">92704</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Maegen</td>
+<td style="text-align: left;">Ted</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">540</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">BFI Industries</td>
+<td style="text-align: left;">PO Box 9369</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Fresno</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">93792</td>
+<td style="text-align: left;">(559) 555-1551</td>
+<td style="text-align: left;">Kaleigh</td>
+<td style="text-align: left;">Erick</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">521</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">Pacific Gas &amp; Electric</td>
+<td style="text-align: left;">Box 52001</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">San Francisco</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">94152</td>
+<td style="text-align: left;">(800) 555-6081</td>
+<td style="text-align: left;">Anthoni</td>
+<td style="text-align: left;">Kaitlyn</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">521</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">Robbins Mobile Lock And Key</td>
+<td style="text-align: left;">4669 N Fresno</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Fresno</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">93726</td>
+<td style="text-align: left;">(559) 555-9375</td>
+<td style="text-align: left;">Leigh</td>
+<td style="text-align: left;">Bill</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">523</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">11</td>
+<td style="text-align: left;">Bill Marvin Electric Inc</td>
+<td style="text-align: left;">4583 E Home</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Fresno</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">93703</td>
+<td style="text-align: left;">(559) 555-5106</td>
+<td style="text-align: left;">Hostlery</td>
+<td style="text-align: left;">Kaitlin</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">523</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">City Of Fresno</td>
+<td style="text-align: left;">PO Box 2069</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Fresno</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">93718</td>
+<td style="text-align: left;">(559) 555-9999</td>
+<td style="text-align: left;">Mayte</td>
+<td style="text-align: left;">Kendall</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">574</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">Golden Eagle Insurance Co</td>
+<td style="text-align: left;">PO Box 85826</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">San Diego</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">92186</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Blanca</td>
+<td style="text-align: left;">Korah</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">590</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">Expedata Inc</td>
+<td style="text-align: left;">4420 N. First Street, Suite 108</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Fresno</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">93726</td>
+<td style="text-align: left;">(559) 555-9586</td>
+<td style="text-align: left;">Quintin</td>
+<td style="text-align: left;">Marvin</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">589</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">ASC Signs</td>
+<td style="text-align: left;">1528 N Sierra Vista</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Fresno</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">93703</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Darien</td>
+<td style="text-align: left;">Elisabeth</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">546</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Step 1: simple self-joining based on city and state of vendor</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors v1 <span class="kw">JOIN</span> vendors v2</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> v1.vendor_city <span class="op">=</span> v2.vendor_city <span class="kw">AND</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>       v1.vendor_state <span class="op">=</span> v2.vendor_state</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> v1.vendor_id, v1.vendor_state, v1.vendor_city</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<colgroup>
+<col style="width: 2%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 2%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 3%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">vendor_id</th>
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">vendor_address1</th>
+<th style="text-align: left;">vendor_address2</th>
+<th style="text-align: left;">vendor_city</th>
+<th style="text-align: left;">vendor_state</th>
+<th style="text-align: left;">vendor_zip_code</th>
+<th style="text-align: left;">vendor_phone</th>
+<th style="text-align: left;">vendor_contact_last_name</th>
+<th style="text-align: left;">vendor_contact_first_name</th>
+<th style="text-align: right;">default_terms_id</th>
+<th style="text-align: right;">default_account_number</th>
+<th style="text-align: right;">vendor_id</th>
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">vendor_address1</th>
+<th style="text-align: left;">vendor_address2</th>
+<th style="text-align: left;">vendor_city</th>
+<th style="text-align: left;">vendor_state</th>
+<th style="text-align: left;">vendor_zip_code</th>
+<th style="text-align: left;">vendor_phone</th>
+<th style="text-align: left;">vendor_contact_last_name</th>
+<th style="text-align: left;">vendor_contact_first_name</th>
+<th style="text-align: right;">default_terms_id</th>
+<th style="text-align: right;">default_account_number</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">US Postal Service</td>
+<td style="text-align: left;">Attn: Supt. Window Services</td>
+<td style="text-align: left;">PO Box 7005</td>
+<td style="text-align: left;">Madison</td>
+<td style="text-align: left;">WI</td>
+<td style="text-align: left;">53707</td>
+<td style="text-align: left;">(800) 555-1205</td>
+<td style="text-align: left;">Alberto</td>
+<td style="text-align: left;">Francesco</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">552</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">US Postal Service</td>
+<td style="text-align: left;">Attn: Supt. Window Services</td>
+<td style="text-align: left;">PO Box 7005</td>
+<td style="text-align: left;">Madison</td>
+<td style="text-align: left;">WI</td>
+<td style="text-align: left;">53707</td>
+<td style="text-align: left;">(800) 555-1205</td>
+<td style="text-align: left;">Alberto</td>
+<td style="text-align: left;">Francesco</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">552</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">National Information Data Ctr</td>
+<td style="text-align: left;">PO Box 96621</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20120</td>
+<td style="text-align: left;">(301) 555-8950</td>
+<td style="text-align: left;">Irvin</td>
+<td style="text-align: left;">Ania</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">540</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">National Information Data Ctr</td>
+<td style="text-align: left;">PO Box 96621</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20120</td>
+<td style="text-align: left;">(301) 555-8950</td>
+<td style="text-align: left;">Irvin</td>
+<td style="text-align: left;">Ania</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">540</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">National Information Data Ctr</td>
+<td style="text-align: left;">PO Box 96621</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20120</td>
+<td style="text-align: left;">(301) 555-8950</td>
+<td style="text-align: left;">Irvin</td>
+<td style="text-align: left;">Ania</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">540</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Register of Copyrights</td>
+<td style="text-align: left;">Library Of Congress</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20559</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Liana</td>
+<td style="text-align: left;">Lukas</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">403</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">National Information Data Ctr</td>
+<td style="text-align: left;">PO Box 96621</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20120</td>
+<td style="text-align: left;">(301) 555-8950</td>
+<td style="text-align: left;">Irvin</td>
+<td style="text-align: left;">Ania</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">540</td>
+<td style="text-align: right;">82</td>
+<td style="text-align: left;">Reiter’s Scientific &amp; Pro Books</td>
+<td style="text-align: left;">2021 K Street Nw</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20006</td>
+<td style="text-align: left;">(202) 555-5561</td>
+<td style="text-align: left;">Rodolfo</td>
+<td style="text-align: left;">Carlee</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">572</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Register of Copyrights</td>
+<td style="text-align: left;">Library Of Congress</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20559</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Liana</td>
+<td style="text-align: left;">Lukas</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">403</td>
+<td style="text-align: right;">82</td>
+<td style="text-align: left;">Reiter’s Scientific &amp; Pro Books</td>
+<td style="text-align: left;">2021 K Street Nw</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20006</td>
+<td style="text-align: left;">(202) 555-5561</td>
+<td style="text-align: left;">Rodolfo</td>
+<td style="text-align: left;">Carlee</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">572</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Register of Copyrights</td>
+<td style="text-align: left;">Library Of Congress</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20559</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Liana</td>
+<td style="text-align: left;">Lukas</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">403</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">National Information Data Ctr</td>
+<td style="text-align: left;">PO Box 96621</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20120</td>
+<td style="text-align: left;">(301) 555-8950</td>
+<td style="text-align: left;">Irvin</td>
+<td style="text-align: left;">Ania</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">540</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Register of Copyrights</td>
+<td style="text-align: left;">Library Of Congress</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20559</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Liana</td>
+<td style="text-align: left;">Lukas</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">403</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Register of Copyrights</td>
+<td style="text-align: left;">Library Of Congress</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20559</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Liana</td>
+<td style="text-align: left;">Lukas</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">403</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">1990 Westwood Blvd Ste 260</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90025</td>
+<td style="text-align: left;">(800) 555-8725</td>
+<td style="text-align: left;">Quinn</td>
+<td style="text-align: left;">Kenzie</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: left;">Opamp Technical Books</td>
+<td style="text-align: left;">1033 N Sycamore Ave.</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90038</td>
+<td style="text-align: left;">(213) 555-4322</td>
+<td style="text-align: left;">Paris</td>
+<td style="text-align: left;">Gideon</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">1990 Westwood Blvd Ste 260</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90025</td>
+<td style="text-align: left;">(800) 555-8725</td>
+<td style="text-align: left;">Quinn</td>
+<td style="text-align: left;">Kenzie</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">1990 Westwood Blvd Ste 260</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90025</td>
+<td style="text-align: left;">(800) 555-8725</td>
+<td style="text-align: left;">Quinn</td>
+<td style="text-align: left;">Kenzie</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">1990 Westwood Blvd Ste 260</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90025</td>
+<td style="text-align: left;">(800) 555-8725</td>
+<td style="text-align: left;">Quinn</td>
+<td style="text-align: left;">Kenzie</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">106</td>
+<td style="text-align: left;">Ford Motor Credit Company</td>
+<td style="text-align: left;">Dept 0419</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90084</td>
+<td style="text-align: left;">(800) 555-7000</td>
+<td style="text-align: left;">Snyder</td>
+<td style="text-align: left;">Karen</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">582</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">1990 Westwood Blvd Ste 260</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90025</td>
+<td style="text-align: left;">(800) 555-8725</td>
+<td style="text-align: left;">Quinn</td>
+<td style="text-align: left;">Kenzie</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">112</td>
+<td style="text-align: left;">Office Depot</td>
+<td style="text-align: left;">File No 81901</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90074</td>
+<td style="text-align: left;">(800) 555-1711</td>
+<td style="text-align: left;">Pinsippi</td>
+<td style="text-align: left;">Val</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">570</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">1990 Westwood Blvd Ste 260</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90025</td>
+<td style="text-align: left;">(800) 555-8725</td>
+<td style="text-align: left;">Quinn</td>
+<td style="text-align: left;">Kenzie</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">98</td>
+<td style="text-align: left;">American Express</td>
+<td style="text-align: left;">Box 0001</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90096</td>
+<td style="text-align: left;">(800) 555-3344</td>
+<td style="text-align: left;">Story</td>
+<td style="text-align: left;">Kirsten</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">160</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Newbrige Book Clubs</td>
+<td style="text-align: left;">3000 Cindel Drive</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">NJ</td>
+<td style="text-align: left;">07882</td>
+<td style="text-align: left;">(800) 555-9980</td>
+<td style="text-align: left;">Marks</td>
+<td style="text-align: left;">Michelle</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">394</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Newbrige Book Clubs</td>
+<td style="text-align: left;">3000 Cindel Drive</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">NJ</td>
+<td style="text-align: left;">07882</td>
+<td style="text-align: left;">(800) 555-9980</td>
+<td style="text-align: left;">Marks</td>
+<td style="text-align: left;">Michelle</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">394</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">California Chamber Of Commerce</td>
+<td style="text-align: left;">3255 Ramos Cir</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">95827</td>
+<td style="text-align: left;">(916) 555-6670</td>
+<td style="text-align: left;">Mauro</td>
+<td style="text-align: left;">Anton</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: left;">Bill Jones</td>
+<td style="text-align: left;">Secretary Of State</td>
+<td style="text-align: left;">PO Box 944230</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">94244</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Deasia</td>
+<td style="text-align: left;">Tristin</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">589</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">California Chamber Of Commerce</td>
+<td style="text-align: left;">3255 Ramos Cir</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">95827</td>
+<td style="text-align: left;">(916) 555-6670</td>
+<td style="text-align: left;">Mauro</td>
+<td style="text-align: left;">Anton</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: left;">State Board Of Equalization</td>
+<td style="text-align: left;">PO Box 942808</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">94208</td>
+<td style="text-align: left;">(916) 555-4911</td>
+<td style="text-align: left;">Dean</td>
+<td style="text-align: left;">Julissa</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">631</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Unequal join to remove the vendor itself, so that the rest of the vendors are left in the result:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors v1 <span class="kw">JOIN</span> vendors v2</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> v1.vendor_city <span class="op">=</span> v2.vendor_city <span class="kw">AND</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>       v1.vendor_state <span class="op">=</span> v2.vendor_state <span class="kw">AND</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>       v1.vendor_name <span class="op">&lt;&gt;</span> v2.vendor_name</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> v1.vendor_id, v1.vendor_state, v1.vendor_city</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<colgroup>
+<col style="width: 2%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 2%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 3%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">vendor_id</th>
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">vendor_address1</th>
+<th style="text-align: left;">vendor_address2</th>
+<th style="text-align: left;">vendor_city</th>
+<th style="text-align: left;">vendor_state</th>
+<th style="text-align: left;">vendor_zip_code</th>
+<th style="text-align: left;">vendor_phone</th>
+<th style="text-align: left;">vendor_contact_last_name</th>
+<th style="text-align: left;">vendor_contact_first_name</th>
+<th style="text-align: right;">default_terms_id</th>
+<th style="text-align: right;">default_account_number</th>
+<th style="text-align: right;">vendor_id</th>
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">vendor_address1</th>
+<th style="text-align: left;">vendor_address2</th>
+<th style="text-align: left;">vendor_city</th>
+<th style="text-align: left;">vendor_state</th>
+<th style="text-align: left;">vendor_zip_code</th>
+<th style="text-align: left;">vendor_phone</th>
+<th style="text-align: left;">vendor_contact_last_name</th>
+<th style="text-align: left;">vendor_contact_first_name</th>
+<th style="text-align: right;">default_terms_id</th>
+<th style="text-align: right;">default_account_number</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">National Information Data Ctr</td>
+<td style="text-align: left;">PO Box 96621</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20120</td>
+<td style="text-align: left;">(301) 555-8950</td>
+<td style="text-align: left;">Irvin</td>
+<td style="text-align: left;">Ania</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">540</td>
+<td style="text-align: right;">82</td>
+<td style="text-align: left;">Reiter’s Scientific &amp; Pro Books</td>
+<td style="text-align: left;">2021 K Street Nw</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20006</td>
+<td style="text-align: left;">(202) 555-5561</td>
+<td style="text-align: left;">Rodolfo</td>
+<td style="text-align: left;">Carlee</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">572</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">National Information Data Ctr</td>
+<td style="text-align: left;">PO Box 96621</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20120</td>
+<td style="text-align: left;">(301) 555-8950</td>
+<td style="text-align: left;">Irvin</td>
+<td style="text-align: left;">Ania</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">540</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Register of Copyrights</td>
+<td style="text-align: left;">Library Of Congress</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20559</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Liana</td>
+<td style="text-align: left;">Lukas</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">403</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Register of Copyrights</td>
+<td style="text-align: left;">Library Of Congress</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20559</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Liana</td>
+<td style="text-align: left;">Lukas</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">403</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">National Information Data Ctr</td>
+<td style="text-align: left;">PO Box 96621</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20120</td>
+<td style="text-align: left;">(301) 555-8950</td>
+<td style="text-align: left;">Irvin</td>
+<td style="text-align: left;">Ania</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">540</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Register of Copyrights</td>
+<td style="text-align: left;">Library Of Congress</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20559</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Liana</td>
+<td style="text-align: left;">Lukas</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">403</td>
+<td style="text-align: right;">82</td>
+<td style="text-align: left;">Reiter’s Scientific &amp; Pro Books</td>
+<td style="text-align: left;">2021 K Street Nw</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">20006</td>
+<td style="text-align: left;">(202) 555-5561</td>
+<td style="text-align: left;">Rodolfo</td>
+<td style="text-align: left;">Carlee</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">572</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">1990 Westwood Blvd Ste 260</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90025</td>
+<td style="text-align: left;">(800) 555-8725</td>
+<td style="text-align: left;">Quinn</td>
+<td style="text-align: left;">Kenzie</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: left;">Opamp Technical Books</td>
+<td style="text-align: left;">1033 N Sycamore Ave.</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90038</td>
+<td style="text-align: left;">(213) 555-4322</td>
+<td style="text-align: left;">Paris</td>
+<td style="text-align: left;">Gideon</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">1990 Westwood Blvd Ste 260</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90025</td>
+<td style="text-align: left;">(800) 555-8725</td>
+<td style="text-align: left;">Quinn</td>
+<td style="text-align: left;">Kenzie</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">98</td>
+<td style="text-align: left;">American Express</td>
+<td style="text-align: left;">Box 0001</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90096</td>
+<td style="text-align: left;">(800) 555-3344</td>
+<td style="text-align: left;">Story</td>
+<td style="text-align: left;">Kirsten</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">160</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">1990 Westwood Blvd Ste 260</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90025</td>
+<td style="text-align: left;">(800) 555-8725</td>
+<td style="text-align: left;">Quinn</td>
+<td style="text-align: left;">Kenzie</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">112</td>
+<td style="text-align: left;">Office Depot</td>
+<td style="text-align: left;">File No 81901</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90074</td>
+<td style="text-align: left;">(800) 555-1711</td>
+<td style="text-align: left;">Pinsippi</td>
+<td style="text-align: left;">Val</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">570</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">1990 Westwood Blvd Ste 260</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90025</td>
+<td style="text-align: left;">(800) 555-8725</td>
+<td style="text-align: left;">Quinn</td>
+<td style="text-align: left;">Kenzie</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">106</td>
+<td style="text-align: left;">Ford Motor Credit Company</td>
+<td style="text-align: left;">Dept 0419</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Los Angeles</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">90084</td>
+<td style="text-align: left;">(800) 555-7000</td>
+<td style="text-align: left;">Snyder</td>
+<td style="text-align: left;">Karen</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">582</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">California Chamber Of Commerce</td>
+<td style="text-align: left;">3255 Ramos Cir</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">95827</td>
+<td style="text-align: left;">(916) 555-6670</td>
+<td style="text-align: left;">Mauro</td>
+<td style="text-align: left;">Anton</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">95887</td>
+<td style="text-align: left;">(209) 555-7500</td>
+<td style="text-align: left;">Nickalus</td>
+<td style="text-align: left;">Kurt</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">522</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">California Chamber Of Commerce</td>
+<td style="text-align: left;">3255 Ramos Cir</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">95827</td>
+<td style="text-align: left;">(916) 555-6670</td>
+<td style="text-align: left;">Mauro</td>
+<td style="text-align: left;">Anton</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">116</td>
+<td style="text-align: left;">State of California</td>
+<td style="text-align: left;">Employment Development Dept</td>
+<td style="text-align: left;">PO Box 826276</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">94230</td>
+<td style="text-align: left;">(209) 555-5132</td>
+<td style="text-align: left;">Articunia</td>
+<td style="text-align: left;">Mercedez</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">631</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">California Chamber Of Commerce</td>
+<td style="text-align: left;">3255 Ramos Cir</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">95827</td>
+<td style="text-align: left;">(916) 555-6670</td>
+<td style="text-align: left;">Mauro</td>
+<td style="text-align: left;">Anton</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">107</td>
+<td style="text-align: left;">Franchise Tax Board</td>
+<td style="text-align: left;">PO Box 942857</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">94257</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Prado</td>
+<td style="text-align: left;">Anita</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">507</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">California Chamber Of Commerce</td>
+<td style="text-align: left;">3255 Ramos Cir</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">95827</td>
+<td style="text-align: left;">(916) 555-6670</td>
+<td style="text-align: left;">Mauro</td>
+<td style="text-align: left;">Anton</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">87</td>
+<td style="text-align: left;">DMV Renewal</td>
+<td style="text-align: left;">PO Box 942894</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">94294</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Josey</td>
+<td style="text-align: left;">Lorena</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">568</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">California Chamber Of Commerce</td>
+<td style="text-align: left;">3255 Ramos Cir</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">95827</td>
+<td style="text-align: left;">(916) 555-6670</td>
+<td style="text-align: left;">Mauro</td>
+<td style="text-align: left;">Anton</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: left;">State Board Of Equalization</td>
+<td style="text-align: left;">PO Box 942808</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">94208</td>
+<td style="text-align: left;">(916) 555-4911</td>
+<td style="text-align: left;">Dean</td>
+<td style="text-align: left;">Julissa</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">631</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">California Chamber Of Commerce</td>
+<td style="text-align: left;">3255 Ramos Cir</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">95827</td>
+<td style="text-align: left;">(916) 555-6670</td>
+<td style="text-align: left;">Mauro</td>
+<td style="text-align: left;">Anton</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">572</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: left;">Bill Jones</td>
+<td style="text-align: left;">Secretary Of State</td>
+<td style="text-align: left;">PO Box 944230</td>
+<td style="text-align: left;">Sacramento</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">94244</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Deasia</td>
+<td style="text-align: left;">Tristin</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">589</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">BFI Industries</td>
+<td style="text-align: left;">PO Box 9369</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Fresno</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">93792</td>
+<td style="text-align: left;">(559) 555-1551</td>
+<td style="text-align: left;">Kaleigh</td>
+<td style="text-align: left;">Erick</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">521</td>
+<td style="text-align: right;">63</td>
+<td style="text-align: left;">Lou Gentile’s Flower Basket</td>
+<td style="text-align: left;">722 E Olive Ave</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Fresno</td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">93728</td>
+<td style="text-align: left;">(559) 555-6643</td>
+<td style="text-align: left;">Anum</td>
+<td style="text-align: left;">Trisha</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">570</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Take distinct values of what’s left in the “left table”. These are the other vendors in the same cities and states.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> v1.vendor_name, v1.vendor_city, </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    v1.vendor_state</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors v1 <span class="kw">JOIN</span> vendors v2</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> v1.vendor_city <span class="op">=</span> v2.vendor_city <span class="kw">AND</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>       v1.vendor_state <span class="op">=</span> v2.vendor_state <span class="kw">AND</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>       v1.vendor_name <span class="op">&lt;&gt;</span> v2.vendor_name</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> v1.vendor_state, v1.vendor_city</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>Displaying records 1 - 15</caption>
@@ -5653,6 +6831,7 @@ window.onload = function() {
 </div>
 </div>
 </section>
+</section>
 <section id="outer-join" class="level1">
 <h1>Outer Join</h1>
 <p>This includes:</p>
@@ -5663,9 +6842,9 @@ window.onload = function() {
 </ul>
 <p>tables overview</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>5 records</caption>
@@ -5701,9 +6880,9 @@ window.onload = function() {
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>9 records</caption>
@@ -5785,9 +6964,9 @@ window.onload = function() {
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.projects </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.projects </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>8 records</caption>
@@ -5837,13 +7016,13 @@ window.onload = function() {
 <section id="left-join" class="level2">
 <h2 class="anchored" data-anchor-id="left-join">Left Join</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> department_name, last_name, project_number</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments d</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">LEFT</span> <span class="kw">JOIN</span> ex.employees e</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> d.department_number <span class="op">=</span> e.department_number</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">LEFT</span> <span class="kw">JOIN</span> ex.projects p</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> e.employee_id <span class="op">=</span> p.employee_id</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> department_name, last_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> department_name, last_name, project_number</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments d</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">LEFT</span> <span class="kw">JOIN</span> ex.employees e</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> d.department_number <span class="op">=</span> e.department_number</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">LEFT</span> <span class="kw">JOIN</span> ex.projects p</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> e.employee_id <span class="op">=</span> p.employee_id</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> department_name, last_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>8 records</caption>
@@ -5903,11 +7082,11 @@ window.onload = function() {
 <section id="right-join" class="level2">
 <h2 class="anchored" data-anchor-id="right-join">Right Join</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> department_name, e.department_number, last_name</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments d </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">RIGHT</span> <span class="kw">JOIN</span> ex.employees e</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> d.department_number <span class="op">=</span> e.department_number</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> department_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> department_name, e.department_number, last_name</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments d </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">RIGHT</span> <span class="kw">JOIN</span> ex.employees e</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> d.department_number <span class="op">=</span> e.department_number</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> department_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>9 records</caption>
@@ -5970,13 +7149,13 @@ window.onload = function() {
 </div>
 <p>combine different join types:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> department_name, last_name, project_number</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments d</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">JOIN</span> ex.employees e</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> d.department_number <span class="op">=</span> e.department_number</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">LEFT</span> <span class="kw">JOIN</span> ex.projects p</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> e.employee_id <span class="op">=</span> p.employee_id</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> department_name, last_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> department_name, last_name, project_number</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments d</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">JOIN</span> ex.employees e</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> d.department_number <span class="op">=</span> e.department_number</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">LEFT</span> <span class="kw">JOIN</span> ex.projects p</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> e.employee_id <span class="op">=</span> p.employee_id</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> department_name, last_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>7 records</caption>
@@ -6033,9 +7212,9 @@ window.onload = function() {
 <p>creates all combinations of rows from different tables.</p>
 <p>tables overview:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>5 records</caption>
@@ -6071,9 +7250,9 @@ window.onload = function() {
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>9 records</caption>
@@ -6156,10 +7335,10 @@ window.onload = function() {
 </div>
 <p>cross join:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> departments.department_number, department_name,</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    employee_id, last_name</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments <span class="kw">CROSS</span> <span class="kw">JOIN</span> ex.employees</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> departments.department_number</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> departments.department_number, department_name,</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    employee_id, last_name</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments <span class="kw">CROSS</span> <span class="kw">JOIN</span> ex.employees</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> departments.department_number</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>Displaying records 1 - 15</caption>
@@ -6276,22 +7455,22 @@ window.onload = function() {
 <li>The column names in the final result set are taken from the first SELECT clause.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="st">&#39;Active&#39;</span> <span class="kw">AS</span> <span class="kw">source</span>, </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  invoice_number, </span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  invoice_date, </span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  invoice_total</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.active_invoices</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_date <span class="op">&gt;=</span> <span class="st">&#39;2022-06-01&#39;</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="st">&#39;Paid&#39;</span> <span class="kw">AS</span> <span class="kw">source</span>, </span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  invoice_number, </span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  invoice_date, </span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  invoice_total</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.paid_invoices</span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_date <span class="op">&gt;=</span> <span class="st">&#39;2022-06-01&#39;</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> invoice_total <span class="kw">DESC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="st">&#39;Active&#39;</span> <span class="kw">AS</span> <span class="kw">source</span>, </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  invoice_number, </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  invoice_date, </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  invoice_total</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.active_invoices</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_date <span class="op">&gt;=</span> <span class="st">&#39;2022-06-01&#39;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="st">&#39;Paid&#39;</span> <span class="kw">AS</span> <span class="kw">source</span>, </span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  invoice_number, </span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  invoice_date, </span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  invoice_total</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.paid_invoices</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_date <span class="op">&gt;=</span> <span class="st">&#39;2022-06-01&#39;</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> invoice_total <span class="kw">DESC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>Displaying records 1 - 15</caption>
@@ -6405,23 +7584,23 @@ window.onload = function() {
 <p>There is no keywords in MySQL to do full outer join directly. Other SQL dialects might have (e.g. T-SQL has FULL (OUTER) JOIN)</p>
 <p>in MySQL it is literally a UNION of LEFT JOIN set and RIGHT JOIN set</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> department_name <span class="kw">AS</span> dept_name,</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>        d.department_number <span class="kw">AS</span> d_dept_no,</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>        e.department_number <span class="kw">AS</span> e_dept_no, last_name</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments d </span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>     <span class="kw">LEFT</span> <span class="kw">JOIN</span> ex.employees e </span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>     <span class="kw">ON</span> d.department_number <span class="op">=</span> e.department_number</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> department_name <span class="kw">AS</span> dept_name,</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>       d.department_number <span class="kw">AS</span> d_dept_no,</span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>       e.department_number <span class="kw">AS</span> e_dept_no, last_name</span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments d </span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">RIGHT</span> <span class="kw">JOIN</span> ex.employees e </span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> d.department_number <span class="op">=</span> e.department_number</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> dept_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> department_name <span class="kw">AS</span> dept_name,</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>        d.department_number <span class="kw">AS</span> d_dept_no,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>        e.department_number <span class="kw">AS</span> e_dept_no, last_name</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments d </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>     <span class="kw">LEFT</span> <span class="kw">JOIN</span> ex.employees e </span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>     <span class="kw">ON</span> d.department_number <span class="op">=</span> e.department_number</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> department_name <span class="kw">AS</span> dept_name,</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>       d.department_number <span class="kw">AS</span> d_dept_no,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>       e.department_number <span class="kw">AS</span> e_dept_no, last_name</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.departments d </span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">RIGHT</span> <span class="kw">JOIN</span> ex.employees e </span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> d.department_number <span class="op">=</span> e.department_number</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> dept_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
 <caption>10 records</caption>
