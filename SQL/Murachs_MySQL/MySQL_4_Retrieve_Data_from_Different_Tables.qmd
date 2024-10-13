@@ -56,9 +56,17 @@ Illustration of common join types:
 
 *Note: full join is not available for all SQL dialects. It is a combination of left join + union + right join*
 
-
-
 ![SQL Join Types](Pictures/sqlJoins_7.png) [Source](https://www.atlassian.com/data/sql/sql-join-types-explained-visually)
+
+Some other join types:
+
+- (Left) Semi-Join: returns only rows in the left table that *have matching rows* in the right table
+- (Left) Anti-Join:  returns rows in the left table that *have no matching rows* in the right table
+
+**Note:**
+
+- Semi-join and Anti-join don't bring any additional fields from other tables.
+- Semi-join and Anti-join  are not covered in details here, because MySQL doesn't have native implementation for these join types.
 
 # Inner Join
 
@@ -167,7 +175,7 @@ FROM ex.employees
 
 ```{sql}
 SELECT customer_first_name, customer_last_name
-FROM om.customers c JOIN ex.employees e 
+FROM om.customers c INNER JOIN ex.employees e 
     ON c.customer_first_name = e.first_name 
    AND c.customer_last_name = e.last_name
 ```
@@ -193,7 +201,7 @@ ORDER BY v1.vendor_id, v1.vendor_state, v1.vendor_city
 Step 1: simple self-joining based on city and state of vendor
 ```{sql}
 SELECT *
-FROM vendors v1 JOIN vendors v2
+FROM vendors v1 INNER JOIN vendors v2
     ON v1.vendor_city = v2.vendor_city AND
        v1.vendor_state = v2.vendor_state
 ORDER BY v1.vendor_id, v1.vendor_state, v1.vendor_city
@@ -201,7 +209,7 @@ ORDER BY v1.vendor_id, v1.vendor_state, v1.vendor_city
 Unequal join to remove the vendor itself, so that the rest of the vendors are left in the result:
 ```{sql}
 SELECT *
-FROM vendors v1 JOIN vendors v2
+FROM vendors v1 INNER JOIN vendors v2
     ON v1.vendor_city = v2.vendor_city AND
        v1.vendor_state = v2.vendor_state AND
        v1.vendor_name <> v2.vendor_name
@@ -211,7 +219,7 @@ Take distinct values of what's left in the "left table". These are the other ven
 ```{sql}
 SELECT DISTINCT v1.vendor_name, v1.vendor_city, 
     v1.vendor_state
-FROM vendors v1 JOIN vendors v2
+FROM vendors v1 INNER JOIN vendors v2
     ON v1.vendor_city = v2.vendor_city AND
        v1.vendor_state = v2.vendor_state AND
        v1.vendor_name <> v2.vendor_name
@@ -273,7 +281,7 @@ combine different join types:
 ```{sql}
 SELECT department_name, last_name, project_number
 FROM ex.departments d
-    JOIN ex.employees e
+    INNER JOIN ex.employees e
         ON d.department_number = e.department_number
     LEFT JOIN ex.projects p
         ON e.employee_id = p.employee_id
@@ -361,7 +369,6 @@ FROM ex.departments d
 
 ORDER BY dept_name
 ```
-
 
 ```{r, echo=FALSE}
 dbDisconnect(conn)
