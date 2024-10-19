@@ -1,5 +1,5 @@
 ---
-title: "Chapter 3 Retrieve Data From a Single Table"
+title: "Retrieve Data from Single Table"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 author: Jianyuan(Andy) Hu
 format: 
@@ -36,7 +36,14 @@ opts_chunk$set(max.print = 15)
 
 # Reference
 
-This example is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+
+Default database in this document is "ap".
+
+Other databases included in the simulation MySQL server:
+
+-   om
+-   ex
 
 ```{sql}
 SELECT * 

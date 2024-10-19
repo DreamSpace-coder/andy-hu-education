@@ -32,6 +32,10 @@ opts_chunk$set(connection = conn)
 opts_chunk$set(max.print = 15)
 ```
 
+# Purpose
+
+This document is created to better illustrate and teach SQL (MySQL) for students in my course: Introduction to SQL and Database Management Techniques.
+
 # Reference
 
 This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).

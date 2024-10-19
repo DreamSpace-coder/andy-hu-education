@@ -1,0 +1,167 @@
+---
+title: "Condition Control"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+author: Jianyuan(Andy) Hu
+format: 
+  html:
+    # https://github.com/quarto-dev/quarto-cli/issues/6645
+    # darkly and arrow seems work well for SQL documents
+    theme: darkly
+    highlight-style: arrow
+    toc: TRUE
+    toc-location: left
+    fontsize: "14"
+    code-fold: false
+    df-print: paged
+    embed-resources: true
+---
+
+```{r, echo=FALSE, warning=FALSE, results='hide'}
+library(odbc)
+library(DBI)
+conn <- dbConnect(
+  drv = odbc(),
+  dsn = "Local Teaching MySQL84",
+  database = "ap"
+)
+
+# "https://yihui.org/knitr/options/"
+library(knitr)
+opts_chunk$set(connection = conn)
+# row.print works for R chucks, max.print works for SQL chucks
+opts_chunk$set(max.print = 15)
+```
+
+# Purpose
+
+This document is created to better illustrate and teach SQL (MySQL) for students in my course: Introduction to SQL and Database Management Techniques.
+
+# Reference
+
+This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+
+Default database in this document is "ap".
+
+Other databases included in the simulation MySQL server:
+
+-   om
+-   ex
+
+# Conditions
+
+Quite often, you would like different things happen based on different values/when some logics return TRUE/FALSE. Each of these comparison/logic test is called a condition. After each condition, you need to specify what behaviour needs to happen.
+
+Take a look at the following example, when we need to create a friendly label for different repayment terms for invoices.
+
+## CASE...WHEN...THEN...END
+```{sql}
+SELECT invoice_number, terms_id,
+    CASE terms_id
+        WHEN 1 THEN 'Net due 10 days'
+        WHEN 2 THEN 'Net due 20 days'
+        WHEN 3 THEN 'Net due 30 days'
+        WHEN 4 THEN 'Net due 60 days'
+        WHEN 5 THEN 'Net due 90 days'
+    END AS terms
+FROM invoices
+```
+
+Another example, we will create a custom payment_owned column by harnessing information from different types of payment statuses among the vendors:
+
+```{sql}
+SELECT invoice_id,
+  vendor_id,
+  invoice_due_date,
+  payment_date,
+  invoice_total,
+  payment_total,
+  credit_total,
+  CASE  
+      WHEN payment_date > invoice_due_date THEN invoice_total - payment_total - credit_total
+      WHEN invoice_total - payment_total - credit_total = 0 THEN payment_total
+      WHEN invoice_total - payment_total - credit_total < 0 THEN invoice_total - payment_total - credit_total
+      ELSE 0
+      END AS payment_owed
+FROM invoices
+```
+Last example, Case when statement can be directly embedded into summary query. This can make conditional summary query so much simpler without involving any Common Table Expressions or subqueries.
+
+```{sql}
+SELECT vendor_id,
+  SUM(CASE  
+      WHEN payment_date > invoice_due_date THEN invoice_total - payment_total - credit_total
+      WHEN invoice_total - payment_total - credit_total = 0 THEN payment_total
+      WHEN invoice_total - payment_total - credit_total < 0 THEN invoice_total - payment_total - credit_total
+      ELSE 0
+      END) AS total_payment_owed
+FROM invoices
+GROUP BY vendor_id
+```
+
+## IF
+
+This is quite similar to the Microsoft Excel IF function. IF is less versatile than CASE WHEN statement because it only examines 1 set of logics. However, IF is effective to write.
+
+Here, we create flag column for vendor from City of Fresno:
+```{sql}
+SELECT vendor_name, 
+  IF(vendor_city = 'Fresno', 'Yes', 'No') AS is_city_fresno
+FROM vendors
+```
+## IFNULL
+
+The following allows to replace NULL values if there are any in the field. Very useful before you use the field in WHERE or HAVING, because they exclude NULL values when comparing.
+
+Example, we want to create a label for all vendors that haven't paid us. 
+
+First, let's see the ones without any payment date just yet:
+
+```{sql}
+SELECT *
+FROM invoices
+WHERE payment_date IS NULL
+LIMIT 15
+```
+Let's see the result of our SQL application.
+```{sql}
+SELECT payment_date,
+       IFNULL(payment_date, 'No Payment') AS new_date
+FROM invoices
+ORDER BY payment_date
+LIMIT 15
+```
+## COALESCE
+
+[COALESCE()](https://dev.mysql.com/doc/refman/8.4/en/comparison-operators.html#function_coalesce): Returns the first non-NULL value in the list, or NULL if there are no non-NULL values.
+
+**IFNULL vs COALESCE:**
+
+The main difference between the two is that IFNULL function takes two arguments and returns the first one if it's not NULL or the second if the first one is NULL.
+
+COALESCE function can take two or more parameters and returns the first non-NULL parameter, or NULL if all parameters are null.
+
+The following example has the same effect as IFNULL example above.
+
+```{sql}
+SELECT payment_date,
+  COALESCE(payment_date, 'No Payment') AS new_date
+FROM invoices
+WHERE payment_date IS NULL
+```
+The following example fully demonstrate how COALESCE works when multiple conditions are passed in:
+```{sql}
+SELECT vendors.vendor_id,
+  vendor_phone,
+  vendor_name,
+  vendor_state,
+  invoice_id, 
+  invoice_date,
+  invoice_total,
+  COALESCE(invoice_id, vendor_phone, invoice_total, 'No invoice', 'No vendor phone number','No invoice total') AS NEW_COL
+FROM vendors LEFT JOIN invoices ON invoices.vendor_id = vendors.vendor_id
+```
+
+```{r, echo=FALSE}
+dbDisconnect(conn)
+```
+

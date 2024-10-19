@@ -1,0 +1,85 @@
+---
+title: "Grouping Data and Summary Queries"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+author: Jianyuan(Andy) Hu
+format: 
+  html:
+    # https://github.com/quarto-dev/quarto-cli/issues/6645
+    # darkly and arrow seems work well for SQL documents
+    theme: darkly
+    highlight-style: arrow
+    toc: TRUE
+    toc-location: left
+    fontsize: "14"
+    code-fold: false
+    df-print: paged
+    embed-resources: true
+---
+
+```{r, echo=FALSE, warning=FALSE, results='hide'}
+library(odbc)
+library(DBI)
+conn <- dbConnect(
+  drv = odbc(),
+  dsn = "Local Teaching MySQL84",
+  database = "ap"
+)
+
+# "https://yihui.org/knitr/options/"
+library(knitr)
+opts_chunk$set(connection = conn)
+# row.print works for R chucks, max.print works for SQL chucks
+opts_chunk$set(max.print = 15)
+```
+
+# Reference
+
+This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+
+Default database in this document is "ap".
+
+Other databases included in the simulation MySQL server:
+
+-   om
+-   ex
+
+# Ranking
+
+```{sql}
+SELECT ROW_NUMBER() OVER(PARTITION BY vendor_state ORDER BY vendor_name) AS 'row_number', vendor_name,
+    vendor_state
+FROM vendors
+```
+```{sql}
+SELECT 
+  vendor_id,
+  invoice_total,
+  invoice_number,
+  ROW_NUMBER() OVER (PARTITION BY vendor_id ORDER BY invoice_total) AS 'row_id', 
+  RANK() OVER (PARTITION BY vendor_id ORDER BY invoice_total) AS 'rank', 
+  DENSE_RANK() OVER (PARTITION BY vendor_id ORDER BY invoice_total) AS 'dense_rank'
+FROM invoices
+```
+```{sql}
+SELECT 
+  rep_id, 
+  sales_year,
+  -- lag series
+  sales_total AS current_sales,
+  LAG(sales_total, 1, 0) OVER rep_window AS last_sales,
+  Sales_total - LAG(sales_total, 1, 0) OVER rep_window AS change_from_last,
+  -- lead series
+  sales_total AS current_sales_again,
+  LEAD(sales_total, 1, 0) OVER rep_window AS next_sales,
+  LEAD(sales_total, 1, 0) OVER rep_window - Sales_total AS change_from_current
+FROM ex.sales_totals
+WINDOW rep_window AS (PARTITION BY rep_id ORDER BY sales_year)
+```
+```{sql}
+
+```
+
+```{r, echo=FALSE}
+dbDisconnect(conn)
+```
+

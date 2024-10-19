@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jianyuan(Andy) Hu">
-<meta name="dcterms.date" content="2024-10-12">
+<meta name="dcterms.date" content="2024-10-19">
 
-<title>Update Data</title>
+<title>Subqueries</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -4359,18 +4359,32 @@ window.onload = function() {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#reference" id="toc-reference" class="nav-link active" data-scroll-target="#reference">Reference</a></li>
-  <li><a href="#table-operations" id="toc-table-operations" class="nav-link" data-scroll-target="#table-operations">Table Operations</a>
+  <li><a href="#purpose" id="toc-purpose" class="nav-link active" data-scroll-target="#purpose">Purpose</a></li>
+  <li><a href="#subqueries" id="toc-subqueries" class="nav-link" data-scroll-target="#subqueries">Subqueries</a>
   <ul class="collapse">
-  <li><a href="#create-table" id="toc-create-table" class="nav-link" data-scroll-target="#create-table">Create table</a></li>
-  <li><a href="#delete-table" id="toc-delete-table" class="nav-link" data-scroll-target="#delete-table">Delete Table</a></li>
-  <li><a href="#recreate-a-table" id="toc-recreate-a-table" class="nav-link" data-scroll-target="#recreate-a-table">Recreate a Table</a></li>
+  <li><a href="#what" id="toc-what" class="nav-link" data-scroll-target="#what">What</a></li>
+  <li><a href="#why" id="toc-why" class="nav-link" data-scroll-target="#why">Why</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a></li>
   </ul></li>
-  <li><a href="#data-operations" id="toc-data-operations" class="nav-link" data-scroll-target="#data-operations">Data Operations</a>
+  <li><a href="#use-cases" id="toc-use-cases" class="nav-link" data-scroll-target="#use-cases">Use Cases</a>
   <ul class="collapse">
-  <li><a href="#insert-add-new-records" id="toc-insert-add-new-records" class="nav-link" data-scroll-target="#insert-add-new-records">INSERT: Add New Records</a></li>
-  <li><a href="#update-modify-records" id="toc-update-modify-records" class="nav-link" data-scroll-target="#update-modify-records">UPDATE: Modify Records</a></li>
-  <li><a href="#delete-remove-records" id="toc-delete-remove-records" class="nav-link" data-scroll-target="#delete-remove-records">DELETE: Remove Records</a></li>
+  <li><a href="#compare-with-an-aggregated-result" id="toc-compare-with-an-aggregated-result" class="nav-link" data-scroll-target="#compare-with-an-aggregated-result">Compare with an Aggregated Result</a></li>
+  <li><a href="#common-table-expressions-cte" id="toc-common-table-expressions-cte" class="nav-link" data-scroll-target="#common-table-expressions-cte">Common Table Expressions (CTE)</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#recursive" id="toc-recursive" class="nav-link" data-scroll-target="#recursive">Recursive</a></li>
+  </ul></li>
+  <li><a href="#use-subquery-in-from" id="toc-use-subquery-in-from" class="nav-link" data-scroll-target="#use-subquery-in-from">Use Subquery in FROM</a></li>
+  <li><a href="#alternative-use-subquery-in-select" id="toc-alternative-use-subquery-in-select" class="nav-link" data-scroll-target="#alternative-use-subquery-in-select">Alternative: Use Subquery in SELECT</a></li>
+  <li><a href="#another-alternative-use-cte" id="toc-another-alternative-use-cte" class="nav-link" data-scroll-target="#another-alternative-use-cte">Another Alternative: Use CTE</a></li>
+  </ul></li>
+  <li><a href="#write-complex-queries" id="toc-write-complex-queries" class="nav-link" data-scroll-target="#write-complex-queries">Write Complex Queries</a></li>
+  <li><a href="#logical-operators" id="toc-logical-operators" class="nav-link" data-scroll-target="#logical-operators">Logical Operators</a>
+  <ul class="collapse">
+  <li><a href="#all" id="toc-all" class="nav-link" data-scroll-target="#all">ALL</a></li>
+  <li><a href="#any" id="toc-any" class="nav-link" data-scroll-target="#any">ANY</a></li>
+  <li><a href="#in" id="toc-in" class="nav-link" data-scroll-target="#in">IN</a></li>
+  <li><a href="#exsits" id="toc-exsits" class="nav-link" data-scroll-target="#exsits">EXSITS</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -4381,7 +4395,7 @@ window.onload = function() {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Update Data</h1>
+<h1 class="title">Subqueries</h1>
 </div>
 
 
@@ -4398,7 +4412,7 @@ window.onload = function() {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 12, 2024</p>
+      <p class="date">October 19, 2024</p>
     </div>
   </div>
   
@@ -4410,8 +4424,9 @@ window.onload = function() {
 </header>
 
 
-<section id="reference" class="level1">
-<h1>Reference</h1>
+<section id="purpose" class="level1">
+<h1>Purpose</h1>
+<p>This document is created to better illustrate and teach SQL (MySQL) for students in my course: Introduction to SQL and Database Management Techniques. # Reference</p>
 <p>This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).</p>
 <p>Default database in this document is “ap”.</p>
 <p>Other databases included in the simulation MySQL server:</p>
@@ -4420,987 +4435,2120 @@ window.onload = function() {
 <li>ex</li>
 </ul>
 </section>
-<section id="table-operations" class="level1">
-<h1>Table Operations</h1>
-<section id="create-table" class="level2">
-<h2 class="anchored" data-anchor-id="create-table">Create table</h2>
+<section id="subqueries" class="level1">
+<h1>Subqueries</h1>
+<section id="what" class="level2">
+<h2 class="anchored" data-anchor-id="what">What</h2>
+<p>Sometimes we want to express complex logic as part of the main query and wish that we could just write another standalone query for that logic.</p>
+<p>Example: in WHERE or HAVING clause, we want to match/exclude only a specific set of values from another table that involves more complex subsetting in its own.</p>
+</section>
+<section id="why" class="level2">
+<h2 class="anchored" data-anchor-id="why">Why</h2>
+<ul>
+<li>More clear description of what complex logic taking place outside of main query.</li>
+<li>More possibilities and flexibility to query data within one main query.</li>
+</ul>
+</section>
+<section id="example" class="level2">
+<h2 class="anchored" data-anchor-id="example">Example</h2>
+<p>The following subquery (getting vendor_id from vendors table where vendor_state is California) allows us subset invoices table based on vendor criteria in vendors table.</p>
+<p>As you can imagine, if we need more complicated logic to subset for vendor_id, we can specify more in WHERE clause in the subquery. - much more expressive and telling how we select vendor_ids - more flexible if we need to add more logic/other operations in vendors table</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> invoices_copy <span class="kw">AS</span> </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">-- everything below can be just a standalong query, you can choose to create the new table with only certain data from the original </span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> invoice_number, invoice_date, invoice_total</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> vendor_id <span class="kw">IN</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">SELECT</span> vendor_id</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>     <span class="kw">FROM</span> vendors</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>     <span class="kw">WHERE</span> vendor_state <span class="op">=</span> <span class="st">&#39;CA&#39;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> invoice_date</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">15</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">invoice_number</th>
+<th style="text-align: left;">invoice_date</th>
+<th style="text-align: right;">invoice_total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">125520-1</td>
+<td style="text-align: left;">2022-04-24</td>
+<td style="text-align: right;">95.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">97/488</td>
+<td style="text-align: left;">2022-04-24</td>
+<td style="text-align: right;">601.95</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">111-92R-10096</td>
+<td style="text-align: left;">2022-04-30</td>
+<td style="text-align: right;">16.33</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">25022117</td>
+<td style="text-align: left;">2022-05-01</td>
+<td style="text-align: right;">6.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">P02-88D77S7</td>
+<td style="text-align: left;">2022-05-03</td>
+<td style="text-align: right;">856.92</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">QP58872</td>
+<td style="text-align: left;">2022-05-07</td>
+<td style="text-align: right;">116.54</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">24863706</td>
+<td style="text-align: left;">2022-05-10</td>
+<td style="text-align: right;">6.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10843</td>
+<td style="text-align: left;">2022-05-11</td>
+<td style="text-align: right;">4901.26</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">77290</td>
+<td style="text-align: left;">2022-05-13</td>
+<td style="text-align: right;">1750.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">121897</td>
+<td style="text-align: left;">2022-05-19</td>
+<td style="text-align: right;">450.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">P02-3772</td>
+<td style="text-align: left;">2022-05-21</td>
+<td style="text-align: right;">7125.34</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">97/486</td>
+<td style="text-align: left;">2022-05-21</td>
+<td style="text-align: right;">953.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">94007005</td>
+<td style="text-align: left;">2022-05-23</td>
+<td style="text-align: right;">220.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RTR-72-3662-X</td>
+<td style="text-align: left;">2022-05-25</td>
+<td style="text-align: right;">1600.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">97/465</td>
+<td style="text-align: left;">2022-05-25</td>
+<td style="text-align: right;">565.15</td>
+</tr>
+</tbody>
+</table>
 </div>
-<p>locate the newly created table: invoices_copy in ap database:</p>
+</div>
+</section>
+</section>
+<section id="use-cases" class="level1">
+<h1>Use Cases</h1>
+<section id="compare-with-an-aggregated-result" class="level2">
+<h2 class="anchored" data-anchor-id="compare-with-an-aggregated-result">Compare with an Aggregated Result</h2>
+<p>Here we want to retrieve all invoice records:</p>
+<ul>
+<li>with balance due &gt; 0</li>
+<li>with balance_due below average of outstanding balance due</li>
+</ul>
+<p>First, let’s see what average balance due looks like:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>SHOW <span class="kw">TABLES</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">AVG</span>(invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total <span class="op">&gt;</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">AVG(invoice_total - payment_total - credit_total)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">2910.947</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Second, let’s see what invoices balance due look like:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> invoice_number, invoice_date, </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total <span class="kw">AS</span> balance_due</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> balance_due <span class="kw">DESC</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">15</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">invoice_number</th>
+<th style="text-align: left;">invoice_date</th>
+<th style="text-align: right;">balance_due</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">P-0608</td>
+<td style="text-align: left;">2022-07-23</td>
+<td style="text-align: right;">19351.18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0-2436</td>
+<td style="text-align: left;">2022-07-31</td>
+<td style="text-align: right;">10976.06</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">31361833</td>
+<td style="text-align: left;">2022-07-21</td>
+<td style="text-align: right;">579.42</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">9982771</td>
+<td style="text-align: left;">2022-07-24</td>
+<td style="text-align: right;">503.20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">547480102</td>
+<td style="text-align: left;">2022-08-01</td>
+<td style="text-align: right;">224.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">134116</td>
+<td style="text-align: left;">2022-07-28</td>
+<td style="text-align: right;">90.36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">39104</td>
+<td style="text-align: left;">2022-07-10</td>
+<td style="text-align: right;">85.31</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">263253270</td>
+<td style="text-align: left;">2022-07-22</td>
+<td style="text-align: right;">67.92</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">263253268</td>
+<td style="text-align: left;">2022-07-21</td>
+<td style="text-align: right;">59.97</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">963253264</td>
+<td style="text-align: left;">2022-07-18</td>
+<td style="text-align: right;">52.25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">263253273</td>
+<td style="text-align: left;">2022-07-22</td>
+<td style="text-align: right;">30.75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">963253249</td>
+<td style="text-align: left;">2022-08-02</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">963253251</td>
+<td style="text-align: left;">2022-04-16</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">963253261</td>
+<td style="text-align: left;">2022-04-16</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">I77271-O01</td>
+<td style="text-align: left;">2022-04-26</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Third, let’s see what invoices below average balance due look like:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> invoice_number, invoice_date, </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total <span class="kw">AS</span> balance_due</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total <span class="op">&lt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>     <span class="kw">SELECT</span> <span class="fu">AVG</span>(invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>     <span class="kw">FROM</span> invoices</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>     <span class="kw">WHERE</span> invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total <span class="op">&gt;</span> <span class="dv">0</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> balance_due <span class="kw">DESC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">invoice_number</th>
+<th style="text-align: left;">invoice_date</th>
+<th style="text-align: right;">balance_due</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">31361833</td>
+<td style="text-align: left;">2022-07-21</td>
+<td style="text-align: right;">579.42</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">9982771</td>
+<td style="text-align: left;">2022-07-24</td>
+<td style="text-align: right;">503.20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">547480102</td>
+<td style="text-align: left;">2022-08-01</td>
+<td style="text-align: right;">224.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">134116</td>
+<td style="text-align: left;">2022-07-28</td>
+<td style="text-align: right;">90.36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">39104</td>
+<td style="text-align: left;">2022-07-10</td>
+<td style="text-align: right;">85.31</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">263253270</td>
+<td style="text-align: left;">2022-07-22</td>
+<td style="text-align: right;">67.92</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">263253268</td>
+<td style="text-align: left;">2022-07-21</td>
+<td style="text-align: right;">59.97</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">963253264</td>
+<td style="text-align: left;">2022-07-18</td>
+<td style="text-align: right;">52.25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">263253273</td>
+<td style="text-align: left;">2022-07-22</td>
+<td style="text-align: right;">30.75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">989319-457</td>
+<td style="text-align: left;">2022-04-08</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">263253241</td>
+<td style="text-align: left;">2022-04-10</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">963253234</td>
+<td style="text-align: left;">2022-04-13</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2-000-2993</td>
+<td style="text-align: left;">2022-04-16</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">963253251</td>
+<td style="text-align: left;">2022-04-16</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">963253261</td>
+<td style="text-align: left;">2022-04-16</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Lastly, filter out all of the invoices without any balance due:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> invoice_number, invoice_date, </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total <span class="kw">AS</span> balance_due</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total <span class="op">&lt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>     <span class="kw">SELECT</span> <span class="fu">AVG</span>(invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>     <span class="kw">FROM</span> invoices</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>     <span class="kw">WHERE</span> invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total <span class="op">&gt;</span> <span class="dv">0</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">AND</span> invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total <span class="op">&gt;</span> <span class="dv">0</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> balance_due <span class="kw">DESC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>9 records</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Tables_in_ap</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">general_ledger_accounts</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">invoice_archive</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">invoice_archive_copy</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">invoice_line_items</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">invoices</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">invoices_copy</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">terms</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">vendor_contacts</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">vendors</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section id="delete-table" class="level2">
-<h2 class="anchored" data-anchor-id="delete-table">Delete Table</h2>
-<p>Always use full 3-part naming to be sure deleting the correct table</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> ap.invoices_copy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Confirm deleted</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>SHOW <span class="kw">TABLES</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ap</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> Tables_in_ap <span class="op">=</span> <span class="st">&#39;invoices_copy&#39;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top">
-<caption>0 records</caption>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Tables_in_ap</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section id="recreate-a-table" class="level2">
-<h2 class="anchored" data-anchor-id="recreate-a-table">Recreate a Table</h2>
-<p>If you want to remove a table as long as the table exists in the database (Especially useful when you only want to create a temporary table):</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> invoices_copy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-</section>
-<section id="data-operations" class="level1">
-<h1>Data Operations</h1>
-<p>Create backup table for demonstration.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> invoices_copy <span class="kw">AS</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>See the schema for the new table. Easier for the adding new data later…</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices_copy</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>1 records</caption>
-<colgroup>
-<col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">invoice_id</th>
-<th style="text-align: right;">vendor_id</th>
 <th style="text-align: left;">invoice_number</th>
 <th style="text-align: left;">invoice_date</th>
-<th style="text-align: right;">invoice_total</th>
-<th style="text-align: right;">payment_total</th>
-<th style="text-align: right;">credit_total</th>
-<th style="text-align: right;">terms_id</th>
-<th style="text-align: left;">invoice_due_date</th>
-<th style="text-align: left;">payment_date</th>
+<th style="text-align: right;">balance_due</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">122</td>
-<td style="text-align: left;">989319-457</td>
-<td style="text-align: left;">2022-04-08</td>
-<td style="text-align: right;">3813.33</td>
-<td style="text-align: right;">3813.33</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-05-08</td>
-<td style="text-align: left;">2022-05-07</td>
+<td style="text-align: left;">31361833</td>
+<td style="text-align: left;">2022-07-21</td>
+<td style="text-align: right;">579.42</td>
 </tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>Create other backup tables:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> invoice_archive_copy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> invoice_archive_copy <span class="kw">AS</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoice_archive</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<section id="insert-add-new-records" class="level2">
-<h2 class="anchored" data-anchor-id="insert-add-new-records">INSERT: Add New Records</h2>
-<p>Add 1 row to invoices_copy table. Notice that all column values must be entered, even if it is NULL.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> invoices_copy <span class="kw">VALUES</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>(<span class="dv">115</span>, <span class="dv">97</span>, <span class="st">&#39;456789&#39;</span>, <span class="st">&#39;2022-08-01&#39;</span>, <span class="fl">8344.50</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="st">&#39;2022-08-31&#39;</span>, <span class="kw">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Check the new record is in place:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices_copy </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_id <span class="op">=</span> <span class="dv">115</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>1 records</caption>
-<colgroup>
-<col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">invoice_id</th>
-<th style="text-align: right;">vendor_id</th>
-<th style="text-align: left;">invoice_number</th>
-<th style="text-align: left;">invoice_date</th>
-<th style="text-align: right;">invoice_total</th>
-<th style="text-align: right;">payment_total</th>
-<th style="text-align: right;">credit_total</th>
-<th style="text-align: right;">terms_id</th>
-<th style="text-align: left;">invoice_due_date</th>
-<th style="text-align: left;">payment_date</th>
+<tr class="even">
+<td style="text-align: left;">9982771</td>
+<td style="text-align: left;">2022-07-24</td>
+<td style="text-align: right;">503.20</td>
 </tr>
-</thead>
-<tbody>
 <tr class="odd">
-<td style="text-align: right;">115</td>
-<td style="text-align: right;">97</td>
-<td style="text-align: left;">456789</td>
+<td style="text-align: left;">547480102</td>
 <td style="text-align: left;">2022-08-01</td>
-<td style="text-align: right;">8344.5</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-08-31</td>
-<td style="text-align: left;">NA</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>Add multiple records in one statement:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> invoices_copy <span class="kw">VALUES</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">116</span>, <span class="dv">97</span>, <span class="st">&#39;456701&#39;</span>, <span class="st">&#39;2022-08-02&#39;</span>, <span class="fl">270.50</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;2022-09-01&#39;</span>, <span class="kw">NULL</span>),</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">117</span>, <span class="dv">97</span>, <span class="st">&#39;456791&#39;</span>, <span class="st">&#39;2022-08-03&#39;</span>, <span class="fl">4390.00</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;2022-09-02&#39;</span>, <span class="kw">NULL</span>),</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">118</span>, <span class="dv">97</span>, <span class="st">&#39;456792&#39;</span>, <span class="st">&#39;2022-08-03&#39;</span>, <span class="fl">565.60</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;2022-09-02&#39;</span>, <span class="kw">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Verify the new records have been added:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ap.invoices_copy </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_id <span class="op">&gt;</span> <span class="dv">115</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>3 records</caption>
-<colgroup>
-<col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">invoice_id</th>
-<th style="text-align: right;">vendor_id</th>
-<th style="text-align: left;">invoice_number</th>
-<th style="text-align: left;">invoice_date</th>
-<th style="text-align: right;">invoice_total</th>
-<th style="text-align: right;">payment_total</th>
-<th style="text-align: right;">credit_total</th>
-<th style="text-align: right;">terms_id</th>
-<th style="text-align: left;">invoice_due_date</th>
-<th style="text-align: left;">payment_date</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">116</td>
-<td style="text-align: right;">97</td>
-<td style="text-align: left;">456701</td>
-<td style="text-align: left;">2022-08-02</td>
-<td style="text-align: right;">270.5</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-09-01</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: right;">224.00</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">117</td>
-<td style="text-align: right;">97</td>
-<td style="text-align: left;">456791</td>
-<td style="text-align: left;">2022-08-03</td>
-<td style="text-align: right;">4390.0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-09-02</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">134116</td>
+<td style="text-align: left;">2022-07-28</td>
+<td style="text-align: right;">90.36</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">118</td>
-<td style="text-align: right;">97</td>
-<td style="text-align: left;">456792</td>
-<td style="text-align: left;">2022-08-03</td>
-<td style="text-align: right;">565.6</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-09-02</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">39104</td>
+<td style="text-align: left;">2022-07-10</td>
+<td style="text-align: right;">85.31</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">263253270</td>
+<td style="text-align: left;">2022-07-22</td>
+<td style="text-align: right;">67.92</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">263253268</td>
+<td style="text-align: left;">2022-07-21</td>
+<td style="text-align: right;">59.97</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">963253264</td>
+<td style="text-align: left;">2022-07-18</td>
+<td style="text-align: right;">52.25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">263253273</td>
+<td style="text-align: left;">2022-07-22</td>
+<td style="text-align: right;">30.75</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>You can also copy and add a whole subset of records from one table (source table) to another (target table). To do this, you need to ensure:</p>
+</section>
+<section id="common-table-expressions-cte" class="level2">
+<h2 class="anchored" data-anchor-id="common-table-expressions-cte">Common Table Expressions (CTE)</h2>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p>CTE allows you to assign nicknames for the output of your subqueries and then use the nicknames to go on to finish the main query.</p>
+<p>Example, we want to write a query to:</p>
 <ul>
-<li>Target table has all the columns in EXACTLY THE SAME names</li>
-<li>Select only the same columns from the source table</li>
+<li>get a vendor from each state</li>
+<li>this vendor has the highest total invoice amount in that state</li>
+<li>list all states with highest vendor invoice total in that state, and its vendor name</li>
 </ul>
-<p>Example: To copy a whole chunk of rows to invoice_arhchive.</p>
-<p>To start with, the target table invoice_archive_copy has no records…</p>
+<p>First, let’s get all vendors and their total invoices together:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoice_archive_copy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_state, </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    vendor_name,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    invoice_total</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors v <span class="kw">INNER</span> <span class="kw">JOIN</span> invoices i </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> v.vendor_id <span class="op">=</span> i.vendor_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="caption-top" style="width:100%;">
-<caption>0 records</caption>
-<colgroup>
-<col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 10%">
-</colgroup>
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
 <thead>
 <tr class="header">
-<th style="text-align: right;">invoice_id</th>
-<th style="text-align: right;">vendor_id</th>
-<th style="text-align: left;">invoice_number</th>
-<th style="text-align: left;">invoice_date</th>
+<th style="text-align: left;">vendor_state</th>
+<th style="text-align: left;">vendor_name</th>
 <th style="text-align: right;">invoice_total</th>
-<th style="text-align: right;">payment_total</th>
-<th style="text-align: right;">credit_total</th>
-<th style="text-align: right;">terms_id</th>
-<th style="text-align: left;">invoice_due_date</th>
-<th style="text-align: left;">payment_date</th>
 </tr>
 </thead>
 <tbody>
+<tr class="odd">
+<td style="text-align: left;">NV</td>
+<td style="text-align: left;">United Parcel Service</td>
+<td style="text-align: right;">3813.33</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TN</td>
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: right;">40.20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TN</td>
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: right;">138.75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TN</td>
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: right;">144.70</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TN</td>
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: right;">15.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TN</td>
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: right;">42.75</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TN</td>
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: right;">172.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Evans Executone Inc</td>
+<td style="text-align: right;">95.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Zylka Design</td>
+<td style="text-align: right;">601.95</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TN</td>
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: right;">42.67</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TN</td>
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: right;">42.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AZ</td>
+<td style="text-align: left;">Wells Fargo Bank</td>
+<td style="text-align: right;">662.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: right;">16.33</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Roadway Package System, Inc</td>
+<td style="text-align: right;">6.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Fresno County Tax Collector</td>
+<td style="text-align: right;">856.92</td>
+</tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>Now, we add all invoices (source table) with 0 balance to the archive table.</p>
+<p>Second, let’s get total invoice amount by vendors and states</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> invoice_archive_copy</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    (invoice_id, vendor_id, invoice_number,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    invoice_total, credit_total, payment_total,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    terms_id, invoice_date, invoice_due_date)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    invoice_id, vendor_id, invoice_number,</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    invoice_total, credit_total, payment_total,</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    terms_id, invoice_date, invoice_due_date</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices_copy</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_total <span class="op">-</span> payment_total <span class="op">-</span> credit_total <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_state, </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    vendor_name,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SUM</span>(invoice_total) <span class="kw">AS</span> sum_of_invoices</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors v <span class="kw">INNER</span> <span class="kw">JOIN</span> invoices i </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> v.vendor_id <span class="op">=</span> i.vendor_id</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> vendor_state, vendor_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_state</th>
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: right;">sum_of_invoices</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NV</td>
+<td style="text-align: left;">United Parcel Service</td>
+<td style="text-align: right;">23177.96</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TN</td>
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: right;">4378.02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Evans Executone Inc</td>
+<td style="text-align: right;">95.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Zylka Design</td>
+<td style="text-align: right;">6940.25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AZ</td>
+<td style="text-align: left;">Wells Fargo Bank</td>
+<td style="text-align: right;">662.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: right;">171.01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Roadway Package System, Inc</td>
+<td style="text-align: right;">43.67</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Fresno County Tax Collector</td>
+<td style="text-align: right;">856.92</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">OH</td>
+<td style="text-align: left;">Compuserve</td>
+<td style="text-align: right;">19.90</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">IBM</td>
+<td style="text-align: right;">1200.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Yesmed, Inc</td>
+<td style="text-align: right;">4901.26</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Pollstar</td>
+<td style="text-align: right;">1750.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">OH</td>
+<td style="text-align: left;">Edward Data Services</td>
+<td style="text-align: right;">207.78</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Gostanian General Building</td>
+<td style="text-align: right;">450.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Digital Dreamworks</td>
+<td style="text-align: right;">7125.34</td>
+</tr>
+</tbody>
+</table>
 </div>
-<p>Now, let’s see the target table again…</p>
+</div>
+<p>Third, now, we need to create a nickname for this result so that we can base on the result of that query to select the max total invoice amount by state:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoice_archive_copy</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> <span class="kw">summary</span> <span class="kw">AS</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>(<span class="kw">SELECT</span> vendor_state, </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    vendor_name,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SUM</span>(invoice_total) <span class="kw">AS</span> sum_of_invoices</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors v <span class="kw">INNER</span> <span class="kw">JOIN</span> invoices i </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> v.vendor_id <span class="op">=</span> i.vendor_id</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> vendor_state, vendor_name)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_state,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">MAX</span>(sum_of_invoices) <span class="kw">AS</span> sum_of_invoices</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">summary</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> vendor_state </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>10 records</caption>
-<colgroup>
-<col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">invoice_id</th>
-<th style="text-align: right;">vendor_id</th>
-<th style="text-align: left;">invoice_number</th>
-<th style="text-align: left;">invoice_date</th>
-<th style="text-align: right;">invoice_total</th>
-<th style="text-align: right;">payment_total</th>
-<th style="text-align: right;">credit_total</th>
-<th style="text-align: right;">terms_id</th>
-<th style="text-align: left;">invoice_due_date</th>
-<th style="text-align: left;">payment_date</th>
+<th style="text-align: left;">vendor_state</th>
+<th style="text-align: right;">sum_of_invoices</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NV</td>
+<td style="text-align: right;">23177.96</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TN</td>
+<td style="text-align: right;">4378.02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CA</td>
+<td style="text-align: right;">7125.34</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AZ</td>
+<td style="text-align: right;">662.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">OH</td>
+<td style="text-align: right;">207.78</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MI</td>
+<td style="text-align: right;">119892.41</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TX</td>
+<td style="text-align: right;">2154.42</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MA</td>
+<td style="text-align: right;">1367.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PA</td>
+<td style="text-align: right;">265.36</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DC</td>
+<td style="text-align: right;">600.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Lastly, we create nicknames for both results (yes, you can create CTE for any query that you wish to assign) and write the final query to get selected vendor names to each state and sum_of_invoices. (hnit: use inner join)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> <span class="kw">summary</span> <span class="kw">AS</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_state, </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    vendor_name,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SUM</span>(invoice_total) <span class="kw">AS</span> sum_of_invoices</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors v <span class="kw">INNER</span> <span class="kw">JOIN</span> invoices i </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> v.vendor_id <span class="op">=</span> i.vendor_id</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> vendor_state, vendor_name</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>top_in_state <span class="kw">AS</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_state,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">MAX</span>(sum_of_invoices) <span class="kw">AS</span> sum_of_invoices</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">summary</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> vendor_state</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">summary</span>.vendor_state, <span class="kw">summary</span>.vendor_name,</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>       top_in_state.sum_of_invoices</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">summary</span> <span class="kw">INNER</span> <span class="kw">JOIN</span> top_in_state</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> <span class="kw">summary</span>.vendor_state <span class="op">=</span> top_in_state.vendor_state <span class="kw">AND</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>       <span class="kw">summary</span>.sum_of_invoices <span class="op">=</span> top_in_state.sum_of_invoices</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="kw">summary</span>.vendor_state</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>10 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_state</th>
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: right;">sum_of_invoices</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AZ</td>
+<td style="text-align: left;">Wells Fargo Bank</td>
+<td style="text-align: right;">662.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Digital Dreamworks</td>
+<td style="text-align: right;">7125.34</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">Reiter’s Scientific &amp; Pro Books</td>
+<td style="text-align: right;">600.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MA</td>
+<td style="text-align: left;">Dean Witter Reynolds</td>
+<td style="text-align: right;">1367.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MI</td>
+<td style="text-align: left;">Malloy Lithographing Inc</td>
+<td style="text-align: right;">119892.41</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NV</td>
+<td style="text-align: left;">United Parcel Service</td>
+<td style="text-align: right;">23177.96</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">OH</td>
+<td style="text-align: left;">Edward Data Services</td>
+<td style="text-align: right;">207.78</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PA</td>
+<td style="text-align: left;">Cardinal Business Media, Inc.</td>
+<td style="text-align: right;">265.36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TN</td>
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: right;">4378.02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TX</td>
+<td style="text-align: left;">Ingram</td>
+<td style="text-align: right;">2154.42</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="recursive" class="level3">
+<h3 class="anchored" data-anchor-id="recursive">Recursive</h3>
+<p>Recursive querying can loop through a result set and perform processing to return a final result set. This is similar to “while loop” in other programming languages such as R, Python.</p>
+<p>This is commonly used when you want to build a dataset reflecting on hierarchy: one parent record has many child records, each child record can have their own child records. For example, see the employees table where there are multiple managing levels embedded.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>9 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">employee_id</th>
+<th style="text-align: left;">last_name</th>
+<th style="text-align: left;">first_name</th>
+<th style="text-align: right;">department_number</th>
+<th style="text-align: right;">manager_id</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">1</td>
-<td style="text-align: right;">122</td>
-<td style="text-align: left;">989319-457</td>
-<td style="text-align: left;">2022-04-08</td>
-<td style="text-align: right;">3813.33</td>
-<td style="text-align: right;">3813.33</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-05-08</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Smith</td>
+<td style="text-align: left;">Cindy</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">NA</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">2</td>
-<td style="text-align: right;">123</td>
-<td style="text-align: left;">263253241</td>
-<td style="text-align: left;">2022-04-10</td>
-<td style="text-align: right;">40.20</td>
-<td style="text-align: right;">40.20</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-05-10</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Jones</td>
+<td style="text-align: left;">Elmer</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">3</td>
-<td style="text-align: right;">123</td>
-<td style="text-align: left;">963253234</td>
-<td style="text-align: left;">2022-04-13</td>
-<td style="text-align: right;">138.75</td>
-<td style="text-align: right;">138.75</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-05-13</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Simonian</td>
+<td style="text-align: left;">Ralph</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">4</td>
-<td style="text-align: right;">123</td>
-<td style="text-align: left;">2-000-2993</td>
-<td style="text-align: left;">2022-04-16</td>
-<td style="text-align: right;">144.70</td>
-<td style="text-align: right;">144.70</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-05-16</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Hernandez</td>
+<td style="text-align: left;">Olivia</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">5</td>
-<td style="text-align: right;">123</td>
-<td style="text-align: left;">963253251</td>
-<td style="text-align: left;">2022-04-16</td>
-<td style="text-align: right;">15.50</td>
-<td style="text-align: right;">15.50</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-05-16</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Aaronsen</td>
+<td style="text-align: left;">Robert</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">6</td>
-<td style="text-align: right;">123</td>
-<td style="text-align: left;">963253261</td>
-<td style="text-align: left;">2022-04-16</td>
-<td style="text-align: right;">42.75</td>
-<td style="text-align: right;">42.75</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-05-16</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Watson</td>
+<td style="text-align: left;">Denise</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">8</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">7</td>
-<td style="text-align: right;">123</td>
-<td style="text-align: left;">963253237</td>
-<td style="text-align: left;">2022-04-21</td>
-<td style="text-align: right;">172.50</td>
-<td style="text-align: right;">172.50</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-05-21</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Hardy</td>
+<td style="text-align: left;">Thomas</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">8</td>
-<td style="text-align: right;">89</td>
-<td style="text-align: left;">125520-1</td>
-<td style="text-align: left;">2022-04-24</td>
-<td style="text-align: right;">95.00</td>
-<td style="text-align: right;">95.00</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-05-04</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">O’Leary</td>
+<td style="text-align: left;">Rhea</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">9</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">9</td>
-<td style="text-align: right;">121</td>
-<td style="text-align: left;">97/488</td>
-<td style="text-align: left;">2022-04-24</td>
-<td style="text-align: right;">601.95</td>
-<td style="text-align: right;">601.95</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: left;">Locario</td>
+<td style="text-align: left;">Paulo</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Example: we will build an employee dataset with ranking order. Each employee has the same staff level will have the same ranking.</p>
+<p>First, we start at the top of the hierachy.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employee_id, </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">CONCAT</span>(first_name, <span class="st">&#39; &#39;</span>, last_name) <span class="kw">AS</span> employee_name,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="kw">AS</span> ranking</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> manager_id <span class="kw">IS</span> <span class="kw">NULL</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">employee_id</th>
+<th style="text-align: left;">employee_name</th>
+<th style="text-align: right;">ranking</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Cindy Smith</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Second, we experiment with the next level where staff are directly managed by employee_id 1. At this stage, they should have ranking increased by 1, as they are level 2 staff.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> employees_cte <span class="kw">AS</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employee_id, </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">CONCAT</span>(first_name, <span class="st">&#39; &#39;</span>, last_name) <span class="kw">AS</span> employee_name,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="kw">AS</span> ranking</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> manager_id <span class="kw">IS</span> <span class="kw">NULL</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employees.employee_id, </span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">CONCAT</span>(employees.first_name, <span class="st">&#39; &#39;</span>, employees.last_name) <span class="kw">AS</span> employee_name,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span><span class="op">+</span><span class="dv">1</span> <span class="kw">AS</span> ranking</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees <span class="kw">INNER</span> <span class="kw">JOIN</span> employees_cte <span class="kw">ON</span> employees.manager_id <span class="op">=</span> employees_cte.employee_id</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> employees.employee_id <span class="op">=</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">employee_id</th>
+<th style="text-align: left;">employee_name</th>
+<th style="text-align: right;">ranking</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Elmer Jones</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Notice that if employees have the same level of manager at this point, it will all be returned with the same level of ranking. This is ensured by the “inner join” to employees table.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> employees_cte <span class="kw">AS</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employee_id, </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">CONCAT</span>(first_name, <span class="st">&#39; &#39;</span>, last_name) <span class="kw">AS</span> employee_name,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="kw">AS</span> ranking</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> manager_id <span class="kw">IS</span> <span class="kw">NULL</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employees.employee_id, </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">CONCAT</span>(employees.first_name, <span class="st">&#39; &#39;</span>, employees.last_name) <span class="kw">AS</span> employee_name,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span><span class="op">+</span><span class="dv">1</span> <span class="kw">AS</span> ranking</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees <span class="kw">INNER</span> <span class="kw">JOIN</span> employees_cte <span class="kw">ON</span> employees.manager_id <span class="op">=</span> employees_cte.employee_id</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> employees.employee_id <span class="op">=</span> <span class="dv">9</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">employee_id</th>
+<th style="text-align: left;">employee_name</th>
+<th style="text-align: right;">ranking</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Paulo Locario</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>If the employee doesn’t have the same management at this time in the employees_cte expression, the result will be empty.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> employees_cte <span class="kw">AS</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employee_id, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">CONCAT</span>(first_name, <span class="st">&#39; &#39;</span>, last_name) <span class="kw">AS</span> employee_name,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="kw">AS</span> ranking</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> manager_id <span class="kw">IS</span> <span class="kw">NULL</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employees.employee_id, </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">CONCAT</span>(employees.first_name, <span class="st">&#39; &#39;</span>, employees.last_name) <span class="kw">AS</span> employee_name,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span><span class="op">+</span><span class="dv">1</span> <span class="kw">AS</span> ranking</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees <span class="kw">INNER</span> <span class="kw">JOIN</span> employees_cte <span class="kw">ON</span> employees.manager_id <span class="op">=</span> employees_cte.employee_id</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> employees.employee_id <span class="op">=</span> <span class="dv">8</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top">
+<caption>0 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">employee_id</th>
+<th style="text-align: left;">employee_name</th>
+<th style="text-align: right;">ranking</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</div>
+</div>
+<p>Third, imagine the following is happening:</p>
+<ol type="1">
+<li>We are going through this exercise second time, add all of the second level of staff with ranking 2 and append to employees_cte;</li>
+<li>We are going through this exercise third time and add all of the third level of staff with ranking 3 and append to employees_cte;</li>
+<li>We are not stopping until we have every record remaining all return empty (i.e. nothing to further append to employees_cte).</li>
+</ol>
+<p>Now, we have the following SQL statement to manifest that logic above.</p>
+<p>With “UNION ALL”, we need to make sure your recursive query should have exactly the same columns and column names with the initial query.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> RECURSIVE employees_cte <span class="kw">AS</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- Nonrecursive query</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employee_id, </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">CONCAT</span>(first_name, <span class="st">&#39; &#39;</span>, last_name) <span class="kw">AS</span> employee_name,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="kw">AS</span> ranking</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> manager_id <span class="kw">IS</span> <span class="kw">NULL</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">-- this to make sure the &quot;append&quot; action is taking place after each loop</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="kw">UNION</span> <span class="kw">ALL</span> </span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">-- Recursive query</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employees.employee_id, </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">CONCAT</span>(first_name, <span class="st">&#39; &#39;</span>, last_name), </span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    ranking <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> ex.employees</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">INNER</span> <span class="kw">JOIN</span> employees_cte</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> employees.manager_id <span class="op">=</span> employees_cte.employee_id</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employees_cte</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> ranking, employee_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>9 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">employee_id</th>
+<th style="text-align: left;">employee_name</th>
+<th style="text-align: right;">ranking</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Cindy Smith</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Elmer Jones</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Paulo Locario</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
 <td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-05-24</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Ralph Simonian</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Olivia Hernandez</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Thomas Hardy</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Rhea O’Leary</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Robert Aaronsen</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">Denise Watson</td>
+<td style="text-align: right;">4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="use-subquery-in-from" class="level2">
+<h2 class="anchored" data-anchor-id="use-subquery-in-from">Use Subquery in FROM</h2>
+<p>Here, we want a query that:</p>
+<ul>
+<li>Gets the names of all vendors.</li>
+<li>Finds the latest invoice date for each vendor.</li>
+<li>Lists the vendors with the most recent invoices at the top.</li>
+</ul>
+<p>First, let’s see total invoice amounts by vendor name and invoice date</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_name, invoice_date</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices i <span class="kw">LEFT</span> <span class="kw">JOIN</span> vendors v <span class="kw">ON</span> i.vendor_id <span class="op">=</span> v.vendor_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">invoice_date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">United Parcel Service</td>
+<td style="text-align: left;">2022-04-08</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">2022-04-10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">2022-04-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">2022-04-16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">2022-04-16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">2022-04-16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">2022-04-21</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Evans Executone Inc</td>
+<td style="text-align: left;">2022-04-24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Zylka Design</td>
+<td style="text-align: left;">2022-04-24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">2022-04-24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">2022-04-25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Wells Fargo Bank</td>
+<td style="text-align: left;">2022-04-26</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: left;">2022-04-30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Roadway Package System, Inc</td>
+<td style="text-align: left;">2022-05-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fresno County Tax Collector</td>
+<td style="text-align: left;">2022-05-03</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Second, let’s see the latest invoice date by each vendor</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_name, <span class="fu">MAX</span>(invoice_date) <span class="kw">AS</span> latest_inv</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>( <span class="kw">SELECT</span> vendor_name, invoice_date</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> invoices i <span class="kw">LEFT</span> <span class="kw">JOIN</span> vendors v <span class="kw">ON</span> i.vendor_id <span class="op">=</span> v.vendor_id ) t</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> vendor_name</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> latest_inv <span class="kw">DESC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">latest_inv</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">2022-08-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Blue Cross</td>
+<td style="text-align: left;">2022-08-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Malloy Lithographing Inc</td>
+<td style="text-align: left;">2022-07-31</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cardinal Business Media, Inc.</td>
+<td style="text-align: left;">2022-07-28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Zylka Design</td>
+<td style="text-align: left;">2022-07-25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">United Parcel Service</td>
+<td style="text-align: left;">2022-07-24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ford Motor Credit Company</td>
+<td style="text-align: left;">2022-07-24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ingram</td>
+<td style="text-align: left;">2022-07-21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Wakefield Co</td>
+<td style="text-align: left;">2022-07-20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Reiter’s Scientific &amp; Pro Books</td>
+<td style="text-align: left;">2022-07-19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: left;">2022-07-15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Suburban Propane</td>
+<td style="text-align: left;">2022-07-15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Data Reproductions Corp</td>
+<td style="text-align: left;">2022-07-10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Abbey Office Furnishings</td>
+<td style="text-align: left;">2022-07-05</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cahners Publishing Company</td>
+<td style="text-align: left;">2022-06-30</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="alternative-use-subquery-in-select" class="level2">
+<h2 class="anchored" data-anchor-id="alternative-use-subquery-in-select">Alternative: Use Subquery in SELECT</h2>
+<p>This is a second solution to the same problem statement:</p>
+<p>“We want a query that:</p>
+<ul>
+<li>Gets the names of all vendors.</li>
+<li>Finds the latest invoice date for each vendor.</li>
+<li>Lists the vendors with the most recent invoices at the top.”</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_name,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">SELECT</span> <span class="fu">MAX</span>(invoice_date) </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>     <span class="kw">FROM</span> invoices</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>     <span class="kw">WHERE</span> vendor_id <span class="op">=</span> vendors.vendor_id) <span class="kw">AS</span> latest_inv</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> latest_inv <span class="kw">DESC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">latest_inv</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">2022-08-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Blue Cross</td>
+<td style="text-align: left;">2022-08-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Malloy Lithographing Inc</td>
+<td style="text-align: left;">2022-07-31</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cardinal Business Media, Inc.</td>
+<td style="text-align: left;">2022-07-28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Zylka Design</td>
+<td style="text-align: left;">2022-07-25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ford Motor Credit Company</td>
+<td style="text-align: left;">2022-07-24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">United Parcel Service</td>
+<td style="text-align: left;">2022-07-24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ingram</td>
+<td style="text-align: left;">2022-07-21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Wakefield Co</td>
+<td style="text-align: left;">2022-07-20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Reiter’s Scientific &amp; Pro Books</td>
+<td style="text-align: left;">2022-07-19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: left;">2022-07-15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Suburban Propane</td>
+<td style="text-align: left;">2022-07-15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Data Reproductions Corp</td>
+<td style="text-align: left;">2022-07-10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Abbey Office Furnishings</td>
+<td style="text-align: left;">2022-07-05</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cahners Publishing Company</td>
+<td style="text-align: left;">2022-06-30</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="another-alternative-use-cte" class="level2">
+<h2 class="anchored" data-anchor-id="another-alternative-use-cte">Another Alternative: Use CTE</h2>
+<p>Now, we have learned common table expression and let’s see another implementation of this query. First, let’s see all invoices of their latest invoice date</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_id, <span class="fu">MAX</span>(invoice_date) </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> vendor_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">vendor_id</th>
+<th style="text-align: left;">MAX(invoice_date)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">34</td>
+<td style="text-align: left;">2022-06-09</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">37</td>
+<td style="text-align: left;">2022-08-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">48</td>
+<td style="text-align: left;">2022-05-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">72</td>
+<td style="text-align: left;">2022-07-10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">80</td>
+<td style="text-align: left;">2022-07-28</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">81</td>
+<td style="text-align: left;">2022-06-21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">82</td>
+<td style="text-align: left;">2022-07-19</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">83</td>
+<td style="text-align: left;">2022-07-21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">86</td>
+<td style="text-align: left;">2022-06-11</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">88</td>
+<td style="text-align: left;">2022-05-15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">89</td>
+<td style="text-align: left;">2022-04-24</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">90</td>
+<td style="text-align: left;">2022-07-20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">94</td>
+<td style="text-align: left;">2022-07-05</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">95</td>
+<td style="text-align: left;">2022-07-15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">96</td>
+<td style="text-align: left;">2022-04-26</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Second, we can create a common table expression for the aggregated result above and use join mechanism to bring vendor name and other information from vendor table</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> t <span class="kw">AS</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>(<span class="kw">SELECT</span> vendor_id, <span class="fu">MAX</span>(invoice_date) <span class="kw">AS</span> latest_inv</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> vendor_id)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_name, latest_inv </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors <span class="kw">LEFT</span> <span class="kw">JOIN</span> t <span class="kw">ON</span> t.vendor_id <span class="op">=</span> vendors.vendor_id</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> latest_inv <span class="kw">DESC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">latest_inv</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">2022-08-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Blue Cross</td>
+<td style="text-align: left;">2022-08-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Malloy Lithographing Inc</td>
+<td style="text-align: left;">2022-07-31</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cardinal Business Media, Inc.</td>
+<td style="text-align: left;">2022-07-28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Zylka Design</td>
+<td style="text-align: left;">2022-07-25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ford Motor Credit Company</td>
+<td style="text-align: left;">2022-07-24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">United Parcel Service</td>
+<td style="text-align: left;">2022-07-24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ingram</td>
+<td style="text-align: left;">2022-07-21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Wakefield Co</td>
+<td style="text-align: left;">2022-07-20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Reiter’s Scientific &amp; Pro Books</td>
+<td style="text-align: left;">2022-07-19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: left;">2022-07-15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Suburban Propane</td>
+<td style="text-align: left;">2022-07-15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Data Reproductions Corp</td>
+<td style="text-align: left;">2022-07-10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Abbey Office Furnishings</td>
+<td style="text-align: left;">2022-07-05</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cahners Publishing Company</td>
+<td style="text-align: left;">2022-06-30</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="write-complex-queries" class="level1">
+<h1>Write Complex Queries</h1>
+<ol type="1">
+<li>State the problem to be solved by the query in plain language.</li>
+<li>Use pseudocode to outline the query.</li>
+<li>Code the subqueries and test them to be sure that they return the correct data.</li>
+<li>Code and test the final query.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> t1.vendor_state, vendor_name, t1.sum_of_invoices</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- sum of invoice totals by vendor</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> vendor_state, vendor_name,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">SUM</span>(invoice_total) <span class="kw">AS</span> sum_of_invoices</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> vendors v <span class="kw">JOIN</span> invoices i </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> v.vendor_id <span class="op">=</span> i.vendor_id</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span> vendor_state, vendor_name</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>) t1</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- top sum of invoice totals by state</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span> vendor_state,  </span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>         <span class="fu">MAX</span>(sum_of_invoices)</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>         <span class="kw">AS</span> sum_of_invoices</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>  (</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- sum of invoice totals by vendor</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> vendor_state, vendor_name,</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">SUM</span>(invoice_total)</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">AS</span> sum_of_invoices</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> vendors v <span class="kw">JOIN</span> invoices i </span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>        <span class="kw">ON</span> v.vendor_id <span class="op">=</span> i.vendor_id</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span> vendor_state, vendor_name</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>  ) t2</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>  <span class="kw">GROUP</span> <span class="kw">BY</span> vendor_state</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>) t3</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> t1.vendor_state <span class="op">=</span> t3.vendor_state <span class="kw">AND</span> </span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>       t1.sum_of_invoices <span class="op">=</span> t3.sum_of_invoices</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> vendor_state</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>10 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_state</th>
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: right;">sum_of_invoices</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AZ</td>
+<td style="text-align: left;">Wells Fargo Bank</td>
+<td style="text-align: right;">662.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;">Digital Dreamworks</td>
+<td style="text-align: right;">7125.34</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DC</td>
+<td style="text-align: left;">Reiter’s Scientific &amp; Pro Books</td>
+<td style="text-align: right;">600.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MA</td>
+<td style="text-align: left;">Dean Witter Reynolds</td>
+<td style="text-align: right;">1367.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MI</td>
+<td style="text-align: left;">Malloy Lithographing Inc</td>
+<td style="text-align: right;">119892.41</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NV</td>
+<td style="text-align: left;">United Parcel Service</td>
+<td style="text-align: right;">23177.96</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">OH</td>
+<td style="text-align: left;">Edward Data Services</td>
+<td style="text-align: right;">207.78</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PA</td>
+<td style="text-align: left;">Cardinal Business Media, Inc.</td>
+<td style="text-align: right;">265.36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TN</td>
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: right;">4378.02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TX</td>
+<td style="text-align: left;">Ingram</td>
+<td style="text-align: right;">2154.42</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="logical-operators" class="level1">
+<h1>Logical Operators</h1>
+<p>The best way to understand logical operators is to put them into use.</p>
+<section id="all" class="level2">
+<h2 class="anchored" data-anchor-id="all">ALL</h2>
+<ul>
+<li>x &gt; ALL (1, 2) &lt;=&gt; x &gt; 2</li>
+<li>x &lt; ALL (1, 2) &lt;=&gt; x &lt; 1</li>
+<li>x = ALL (1, 2) &lt;=&gt; (x = 1) AND (x = 2)</li>
+<li>x != ALL (1, 2)&lt;=&gt; x NOT IN (1, 2)</li>
+</ul>
+<p>Example: we want to get all of the invoices with invoice_totals &gt; the largest invoice_totals from vendor with vendor_id 34.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_name, invoice_number, invoice_total</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices i <span class="kw">JOIN</span> vendors v <span class="kw">ON</span> i.vendor_id <span class="op">=</span> v.vendor_id</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_total <span class="op">&gt;</span> <span class="kw">ALL</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">SELECT</span> invoice_total</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>     <span class="kw">FROM</span> invoices</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>     <span class="kw">WHERE</span> vendor_id <span class="op">=</span> <span class="dv">34</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> vendor_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">invoice_number</th>
+<th style="text-align: right;">invoice_total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Bertelsmann Industry Svcs. Inc</td>
+<td style="text-align: left;">509786</td>
+<td style="text-align: right;">6940.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cahners Publishing Company</td>
+<td style="text-align: left;">587056</td>
+<td style="text-align: right;">2184.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Computerworld</td>
+<td style="text-align: left;">367447</td>
+<td style="text-align: right;">2433.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Data Reproductions Corp</td>
+<td style="text-align: left;">40318</td>
+<td style="text-align: right;">21842.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dean Witter Reynolds</td>
+<td style="text-align: left;">75C-90227</td>
+<td style="text-align: right;">1367.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Digital Dreamworks</td>
+<td style="text-align: left;">P02-3772</td>
+<td style="text-align: right;">7125.34</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Franchise Tax Board</td>
+<td style="text-align: left;">RTR-72-3662-X</td>
+<td style="text-align: right;">1600.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ingram</td>
+<td style="text-align: left;">31359783</td>
+<td style="text-align: right;">1575.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Malloy Lithographing Inc</td>
+<td style="text-align: left;">0-2058</td>
+<td style="text-align: right;">37966.19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Malloy Lithographing Inc</td>
+<td style="text-align: left;">P-0259</td>
+<td style="text-align: right;">26881.40</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Malloy Lithographing Inc</td>
+<td style="text-align: left;">P-0608</td>
+<td style="text-align: right;">20551.18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Malloy Lithographing Inc</td>
+<td style="text-align: left;">0-2060</td>
+<td style="text-align: right;">23517.58</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Malloy Lithographing Inc</td>
+<td style="text-align: left;">0-2436</td>
+<td style="text-align: right;">10976.06</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pollstar</td>
+<td style="text-align: left;">77290</td>
+<td style="text-align: right;">1750.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">United Parcel Service</td>
+<td style="text-align: left;">989319-457</td>
+<td style="text-align: right;">3813.33</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="any" class="level2">
+<h2 class="anchored" data-anchor-id="any">ANY</h2>
+<ul>
+<li>x &gt; ANY (1, 2) &lt;=&gt; x &gt; 1</li>
+<li>x &lt; ANY (1, 2) &lt;=&gt; x &lt; 2</li>
+<li>x = ANY (1, 2) &lt;=&gt; x IN (1, 2)</li>
+<li>x != ANY (1, 2) &lt;=&gt; (x != 1) OR (x != 2)</li>
+</ul>
+<p>Example: we want to get all of the invoices with invoice_totals &lt; the largest invoice_totals from vendor with vendor_id 115.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_name, invoice_number, invoice_total</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors <span class="kw">JOIN</span> invoices</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">ON</span> vendors.vendor_id <span class="op">=</span> invoices.vendor_id</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_total <span class="op">&lt;</span> <span class="kw">ANY</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">SELECT</span> invoice_total</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>     <span class="kw">FROM</span> invoices</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>     <span class="kw">WHERE</span> vendor_id <span class="op">=</span> <span class="dv">115</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">invoice_number</th>
+<th style="text-align: right;">invoice_total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">963253251</td>
+<td style="text-align: right;">15.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: left;">111-92R-10096</td>
+<td style="text-align: right;">16.33</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Roadway Package System, Inc</td>
+<td style="text-align: left;">25022117</td>
+<td style="text-align: right;">6.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Compuserve</td>
+<td style="text-align: left;">21-4748363</td>
+<td style="text-align: right;">9.95</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">4-321-2596</td>
+<td style="text-align: right;">10.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Roadway Package System, Inc</td>
+<td style="text-align: left;">24863706</td>
+<td style="text-align: right;">6.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Compuserve</td>
+<td style="text-align: left;">21-4923721</td>
+<td style="text-align: right;">9.95</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">4-342-8069</td>
+<td style="text-align: right;">10.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: left;">111-92R-10094</td>
+<td style="text-align: right;">19.67</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: left;">111-92R-10097</td>
+<td style="text-align: right;">16.33</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">4-314-3057</td>
+<td style="text-align: right;">13.75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">963253267</td>
+<td style="text-align: right;">23.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Roadway Package System, Inc</td>
+<td style="text-align: left;">24780512</td>
+<td style="text-align: right;">6.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">43966316</td>
+<td style="text-align: right;">10.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Abbey Office Furnishings</td>
+<td style="text-align: left;">203339-13</td>
+<td style="text-align: right;">17.50</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="in" class="level2">
+<h2 class="anchored" data-anchor-id="in">IN</h2>
+<p>If a value is in a list of values.</p>
+<p>Subquery should return a single column (i.e. a list of values).</p>
+<p>Example: the following returns all vendor names and their state where they have invoice total less than $100.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_name, vendor_state</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> vendor_name <span class="kw">IN</span> </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  ( <span class="kw">SELECT</span> vendor_name</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> invoices i <span class="kw">INNER</span> <span class="kw">JOIN</span> vendors v <span class="kw">ON</span> i.vendor_id <span class="op">=</span> v.vendor_id</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> invoice_total <span class="op">&lt;</span> <span class="dv">100</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> vendor_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>10 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">vendor_state</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Abbey Office Furnishings</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cardinal Business Media, Inc.</td>
+<td style="text-align: left;">PA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Coffee Break Service</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Compuserve</td>
+<td style="text-align: left;">OH</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Data Reproductions Corp</td>
+<td style="text-align: left;">MI</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Evans Executone Inc</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Federal Express Corporation</td>
+<td style="text-align: left;">TN</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Roadway Package System, Inc</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Suburban Propane</td>
+<td style="text-align: left;">CA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="exsits" class="level2">
+<h2 class="anchored" data-anchor-id="exsits">EXSITS</h2>
+<p>Example: The following gets all of vendors with existing invoices</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_id, vendor_name, vendor_state</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">EXISTS</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">SELECT</span> <span class="op">*</span> </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>     <span class="kw">FROM</span> invoices</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>     <span class="kw">WHERE</span> vendor_id <span class="op">=</span> vendors.vendor_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">vendor_id</th>
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">vendor_state</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">34</td>
+<td style="text-align: left;">IBM</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">37</td>
+<td style="text-align: left;">Blue Cross</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">48</td>
+<td style="text-align: left;">Fresno County Tax Collector</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">72</td>
+<td style="text-align: left;">Data Reproductions Corp</td>
+<td style="text-align: left;">MI</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">80</td>
+<td style="text-align: left;">Cardinal Business Media, Inc.</td>
+<td style="text-align: left;">PA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">81</td>
+<td style="text-align: left;">Wang Laboratories, Inc.</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">82</td>
+<td style="text-align: left;">Reiter’s Scientific &amp; Pro Books</td>
+<td style="text-align: left;">DC</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">83</td>
+<td style="text-align: left;">Ingram</td>
+<td style="text-align: left;">TX</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">86</td>
+<td style="text-align: left;">Computerworld</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">88</td>
+<td style="text-align: left;">Edward Data Services</td>
+<td style="text-align: left;">OH</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">89</td>
+<td style="text-align: left;">Evans Executone Inc</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">90</td>
+<td style="text-align: left;">Wakefield Co</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">94</td>
+<td style="text-align: left;">Abbey Office Furnishings</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">95</td>
+<td style="text-align: left;">Pacific Bell</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">96</td>
+<td style="text-align: left;">Wells Fargo Bank</td>
+<td style="text-align: left;">AZ</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>To negate, i.e. to find all vendors that don’t have any invoices yet. (“NOT EXISTS”)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> vendor_id, vendor_name, vendor_state</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> vendors</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">SELECT</span> <span class="op">*</span> </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>     <span class="kw">FROM</span> invoices</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>     <span class="kw">WHERE</span> vendor_id <span class="op">=</span> vendors.vendor_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 15</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">vendor_id</th>
+<th style="text-align: left;">vendor_name</th>
+<th style="text-align: left;">vendor_state</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">US Postal Service</td>
+<td style="text-align: left;">WI</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">National Information Data Ctr</td>
+<td style="text-align: left;">DC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Register of Copyrights</td>
+<td style="text-align: left;">DC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">Jobtrak</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">Newbrige Book Clubs</td>
+<td style="text-align: left;">NJ</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">California Chamber Of Commerce</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">Towne Advertiser’s Mailing Svcs</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">BFI Industries</td>
+<td style="text-align: left;">CA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">Pacific Gas &amp; Electric</td>
+<td style="text-align: left;">CA</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">10</td>
-<td style="text-align: right;">123</td>
-<td style="text-align: left;">263253250</td>
-<td style="text-align: left;">2022-04-24</td>
-<td style="text-align: right;">42.67</td>
-<td style="text-align: right;">42.67</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-05-24</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">Robbins Mobile Lock And Key</td>
+<td style="text-align: left;">CA</td>
 </tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section id="update-modify-records" class="level2">
-<h2 class="anchored" data-anchor-id="update-modify-records">UPDATE: Modify Records</h2>
-<p>Example: We want to manually update an invoice record with a particular invoice_number</p>
-<p>Now, let’s see what it looks like before any updates</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices_copy</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_number <span class="op">=</span> <span class="st">&#39;97/522&#39;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>1 records</caption>
-<colgroup>
-<col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">invoice_id</th>
-<th style="text-align: right;">vendor_id</th>
-<th style="text-align: left;">invoice_number</th>
-<th style="text-align: left;">invoice_date</th>
-<th style="text-align: right;">invoice_total</th>
-<th style="text-align: right;">payment_total</th>
-<th style="text-align: right;">credit_total</th>
-<th style="text-align: right;">terms_id</th>
-<th style="text-align: left;">invoice_due_date</th>
-<th style="text-align: left;">payment_date</th>
-</tr>
-</thead>
-<tbody>
 <tr class="odd">
-<td style="text-align: right;">78</td>
-<td style="text-align: right;">121</td>
-<td style="text-align: left;">97/522</td>
-<td style="text-align: left;">2022-06-28</td>
-<td style="text-align: right;">1962.13</td>
-<td style="text-align: right;">1762.13</td>
-<td style="text-align: right;">200</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-07-28</td>
-<td style="text-align: left;">2022-07-30</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>Now, we will update the payment_date and payment_total values of the same invoice:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> invoices_copy</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SET</span> payment_date <span class="op">=</span> <span class="st">&#39;2022-09-21&#39;</span>, </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    payment_total <span class="op">=</span> <span class="fl">19351.18</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_number <span class="op">=</span> <span class="st">&#39;97/522&#39;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Now, let’s see what it looks like after the updates:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices_copy</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_number <span class="op">=</span> <span class="st">&#39;97/522&#39;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>1 records</caption>
-<colgroup>
-<col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">invoice_id</th>
-<th style="text-align: right;">vendor_id</th>
-<th style="text-align: left;">invoice_number</th>
-<th style="text-align: left;">invoice_date</th>
-<th style="text-align: right;">invoice_total</th>
-<th style="text-align: right;">payment_total</th>
-<th style="text-align: right;">credit_total</th>
-<th style="text-align: right;">terms_id</th>
-<th style="text-align: left;">invoice_due_date</th>
-<th style="text-align: left;">payment_date</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">78</td>
-<td style="text-align: right;">121</td>
-<td style="text-align: left;">97/522</td>
-<td style="text-align: left;">2022-06-28</td>
-<td style="text-align: right;">1962.13</td>
-<td style="text-align: right;">19351.18</td>
-<td style="text-align: right;">200</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-07-28</td>
-<td style="text-align: left;">2022-09-21</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>We can also update the new values with the calculation from the old values.</p>
-<p>Example: We want to increase the credit total by 100</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> invoices_copy</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SET</span> credit_total <span class="op">=</span> credit_total <span class="op">+</span> <span class="dv">100</span> </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">/* mathmatically, this does not make sense, but here, it simply means credit_total (new) = credit_total (old) + 100 */</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_number <span class="op">=</span> <span class="st">&#39;97/522&#39;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Now, let’s see what it looks like after the second update:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices_copy</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_number <span class="op">=</span> <span class="st">&#39;97/522&#39;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>1 records</caption>
-<colgroup>
-<col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">invoice_id</th>
-<th style="text-align: right;">vendor_id</th>
-<th style="text-align: left;">invoice_number</th>
-<th style="text-align: left;">invoice_date</th>
-<th style="text-align: right;">invoice_total</th>
-<th style="text-align: right;">payment_total</th>
-<th style="text-align: right;">credit_total</th>
-<th style="text-align: right;">terms_id</th>
-<th style="text-align: left;">invoice_due_date</th>
-<th style="text-align: left;">payment_date</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">78</td>
-<td style="text-align: right;">121</td>
-<td style="text-align: left;">97/522</td>
-<td style="text-align: left;">2022-06-28</td>
-<td style="text-align: right;">1962.13</td>
-<td style="text-align: right;">19351.18</td>
-<td style="text-align: right;">300</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">2022-07-28</td>
-<td style="text-align: left;">2022-09-21</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>You can also use update a batch of records meeting criteria from a subquery.</p>
-<p>Example: we want to set all terms_id to 1 (instead of current 2) for a vendor with name called ‘Pacific Bell’. This is only possible when querying with vendor table.</p>
-<p>Now, let’s see what all invoices look with vendor Pacific Bell like, before any updates:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices_copy</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> vendor_id <span class="kw">IN</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>      (<span class="kw">SELECT</span> vendor_id</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>       <span class="kw">FROM</span> vendors</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>       <span class="kw">WHERE</span> vendor_name <span class="op">=</span> <span class="st">&#39;Pacific Bell&#39;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>6 records</caption>
-<colgroup>
-<col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">invoice_id</th>
-<th style="text-align: right;">vendor_id</th>
-<th style="text-align: left;">invoice_number</th>
-<th style="text-align: left;">invoice_date</th>
-<th style="text-align: right;">invoice_total</th>
-<th style="text-align: right;">payment_total</th>
-<th style="text-align: right;">credit_total</th>
-<th style="text-align: right;">terms_id</th>
-<th style="text-align: left;">invoice_due_date</th>
-<th style="text-align: left;">payment_date</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">13</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10096</td>
-<td style="text-align: left;">2022-04-30</td>
-<td style="text-align: right;">16.33</td>
-<td style="text-align: right;">16.33</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2022-05-20</td>
-<td style="text-align: left;">2022-05-23</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: left;">Bill Marvin Electric Inc</td>
+<td style="text-align: left;">CA</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">44</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10094</td>
-<td style="text-align: left;">2022-06-01</td>
-<td style="text-align: right;">19.67</td>
-<td style="text-align: right;">19.67</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2022-06-21</td>
-<td style="text-align: left;">2022-06-24</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">City Of Fresno</td>
+<td style="text-align: left;">CA</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">49</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10097</td>
-<td style="text-align: left;">2022-06-04</td>
-<td style="text-align: right;">16.33</td>
-<td style="text-align: right;">16.33</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2022-06-24</td>
-<td style="text-align: left;">2022-06-26</td>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">Golden Eagle Insurance Co</td>
+<td style="text-align: left;">CA</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">53</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10092</td>
-<td style="text-align: left;">2022-06-09</td>
-<td style="text-align: right;">46.21</td>
-<td style="text-align: right;">46.21</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2022-06-29</td>
-<td style="text-align: left;">2022-07-02</td>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">Expedata Inc</td>
+<td style="text-align: left;">CA</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">83</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10093</td>
-<td style="text-align: left;">2022-07-06</td>
-<td style="text-align: right;">39.77</td>
-<td style="text-align: right;">39.77</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2022-07-26</td>
-<td style="text-align: left;">2022-07-22</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">91</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10095</td>
-<td style="text-align: left;">2022-07-15</td>
-<td style="text-align: right;">32.70</td>
-<td style="text-align: right;">32.70</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2022-08-04</td>
-<td style="text-align: left;">2022-08-06</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>Now, we apply the updates:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> invoices_copy</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SET</span> terms_id <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> vendor_id <span class="op">=</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>      (<span class="kw">SELECT</span> vendor_id</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>       <span class="kw">FROM</span> vendors</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>       <span class="kw">WHERE</span> vendor_name <span class="op">=</span> <span class="st">&#39;Pacific Bell&#39;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Now, let’s see what all invoices look with vendor Pacific Bell like, after updates:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices_copy</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> vendor_id <span class="kw">IN</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>      (<span class="kw">SELECT</span> vendor_id</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>       <span class="kw">FROM</span> vendors</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>       <span class="kw">WHERE</span> vendor_name <span class="op">=</span> <span class="st">&#39;Pacific Bell&#39;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>6 records</caption>
-<colgroup>
-<col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">invoice_id</th>
-<th style="text-align: right;">vendor_id</th>
-<th style="text-align: left;">invoice_number</th>
-<th style="text-align: left;">invoice_date</th>
-<th style="text-align: right;">invoice_total</th>
-<th style="text-align: right;">payment_total</th>
-<th style="text-align: right;">credit_total</th>
-<th style="text-align: right;">terms_id</th>
-<th style="text-align: left;">invoice_due_date</th>
-<th style="text-align: left;">payment_date</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">13</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10096</td>
-<td style="text-align: left;">2022-04-30</td>
-<td style="text-align: right;">16.33</td>
-<td style="text-align: right;">16.33</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-05-20</td>
-<td style="text-align: left;">2022-05-23</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">44</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10094</td>
-<td style="text-align: left;">2022-06-01</td>
-<td style="text-align: right;">19.67</td>
-<td style="text-align: right;">19.67</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-06-21</td>
-<td style="text-align: left;">2022-06-24</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">49</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10097</td>
-<td style="text-align: left;">2022-06-04</td>
-<td style="text-align: right;">16.33</td>
-<td style="text-align: right;">16.33</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-06-24</td>
-<td style="text-align: left;">2022-06-26</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">53</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10092</td>
-<td style="text-align: left;">2022-06-09</td>
-<td style="text-align: right;">46.21</td>
-<td style="text-align: right;">46.21</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-06-29</td>
-<td style="text-align: left;">2022-07-02</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">83</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10093</td>
-<td style="text-align: left;">2022-07-06</td>
-<td style="text-align: right;">39.77</td>
-<td style="text-align: right;">39.77</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-07-26</td>
-<td style="text-align: left;">2022-07-22</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">91</td>
-<td style="text-align: right;">95</td>
-<td style="text-align: left;">111-92R-10095</td>
-<td style="text-align: left;">2022-07-15</td>
-<td style="text-align: right;">32.70</td>
-<td style="text-align: right;">32.70</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-08-04</td>
-<td style="text-align: left;">2022-08-06</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><strong>NOTE: it is a good idea to query and test the criteria (WHERE clause), before you apply any updates. The same goes to next section “DELETE”, when removing records.</strong></p>
-</section>
-<section id="delete-remove-records" class="level2">
-<h2 class="anchored" data-anchor-id="delete-remove-records">DELETE: Remove Records</h2>
-<p>Example: we want to remove all the last 3 inserted records: vendor_id: 116, 117, 118</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DELETE</span> <span class="kw">FROM</span> invoices_copy</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_id <span class="op">&gt;=</span> <span class="dv">116</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Now, let’s see the result: (all records from 116 and above are gone)</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> invoices_copy</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> invoice_id <span class="op">&gt;=</span> <span class="dv">115</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<caption>1 records</caption>
-<colgroup>
-<col style="width: 8%">
-<col style="width: 7%">
-<col style="width: 11%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">invoice_id</th>
-<th style="text-align: right;">vendor_id</th>
-<th style="text-align: left;">invoice_number</th>
-<th style="text-align: left;">invoice_date</th>
-<th style="text-align: right;">invoice_total</th>
-<th style="text-align: right;">payment_total</th>
-<th style="text-align: right;">credit_total</th>
-<th style="text-align: right;">terms_id</th>
-<th style="text-align: left;">invoice_due_date</th>
-<th style="text-align: left;">payment_date</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">115</td>
-<td style="text-align: right;">97</td>
-<td style="text-align: left;">456789</td>
-<td style="text-align: left;">2022-08-01</td>
-<td style="text-align: right;">8344.5</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2022-08-31</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">ASC Signs</td>
+<td style="text-align: left;">CA</td>
 </tr>
 </tbody>
 </table>
