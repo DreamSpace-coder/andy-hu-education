@@ -1,0 +1,240 @@
+# Working with Character Values
+
+```{r, echo=FALSE, warning=FALSE, results='hide'}
+library(odbc)
+library(DBI)
+conn <- dbConnect(
+  drv = odbc(),
+  dsn = "Local Teaching MySQL84",
+  database = "ex"
+)
+
+# "https://yihui.org/knitr/options/"
+library(knitr)
+opts_chunk$set(connection = conn)
+# row.print works for R chucks, max.print works for SQL chucks
+opts_chunk$set(max.print = 15)
+```
+
+## Reference
+
+Default database in this chapter is "ex".
+
+Other databases included in the simulation MySQL server:
+
+-   om
+-   ap
+
+This document is based on MySQL 8.4.
+
+MySQL references for string manipulation: https://dev.mysql.com/doc/refman/8.4/en/string-functions.html
+
+## Character Data Type
+
+## Regular Expression {#regular-expression}
+
+A regular expression (shortened as regex or regexp), sometimes referred to as rational expression, is a sequence of characters that specifies a match pattern in text.
+
+There is no universal guide for regex, as each implementation has their own dialoect/flavour. Here is a one that help you to get started. [MySQL Regex Syntax](https://dev.mysql.com/doc/refman/8.4/en/regexp.html#regexp-syntax)
+
+## String Extraction
+
+### SUBSTRING_INDEX
+
+[SUBSTRING_INDEX()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_substring-index): Return a substring from a string before the specified number of occurrences of the delimiter.
+
+```{sql}
+SELECT emp_name,
+    SUBSTRING_INDEX(emp_name, ' ', 1) AS first_name,
+    SUBSTRING_INDEX(emp_name, ' ', -1) AS last_name
+FROM string_sample
+```
+
+### SUBSTRING
+
+[SUBSTRING()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_substring): Return the substring between 2 position indexes.
+
+Noitce the following example and the actions:
+
+- first number is the index position 
+  - if positive, counting from the left end
+  - if negative, counting from the right end
+  
+- second number says how many characters counting down should be returned.
+
+```{sql}
+SELECT emp_name,
+    SUBSTRING(emp_name, 2, 2),
+    SUBSTRING(emp_name, -4, 3)
+FROM string_sample
+```
+
+### REGEXP_SUBSTR
+
+[REGEXP_SUBSTR()](https://dev.mysql.com/doc/refman/8.4/en/regexp.html#function_regexp-substr): It is the same as SUBSTRING, but use the regular expression to mathc instead of position index.
+
+For more information about regular expression, see [Regular Expression](#regular-expression)
+
+```{sql}
+SELECT emp_name,
+  -- match any capital letter, starting at position 3 after the match, return the position 2 after the starting point 
+  REGEXP_SUBSTR(emp_name, '[A-Z]', 3, 2)
+FROM string_sample
+```
+
+## String Mutation
+
+### LPAD/RPAD
+
+Make sure all text strings are extended to the same length, either:
+
+-   [LPAD()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_lpad): add characters on the left hand.
+-   [RPAD()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_rpad): add characters on the right hand.
+
+Example: the following adds leading 0s to emplid Before any update to emp_id:
+
+```{sql}
+SELECT emp_id, emp_name
+FROM string_sample
+ORDER BY emp_id
+```
+
+After padding 0s added to emp_id:
+
+```{sql}
+SELECT LPAD(emp_id, 2, '0') AS emp_id, emp_name
+FROM string_sample
+ORDER BY emp_id
+```
+
+If adding 0s to the right side
+
+```{sql}
+SELECT RPAD(emp_id, 3, '0') AS emp_id, emp_name
+FROM string_sample
+ORDER BY emp_id
+```
+
+### LOWER/UPPER
+
+[LOWER()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_lower): Returns the string str with all characters changed to lowercase.
+
+[UPPER()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_upper): Returns the string str with all characters changed to uppercase
+
+```{sql}
+SELECT emp_name, 
+  LOWER(emp_name) AS lowercase,
+  UPPER(emp_name) AS uppercase
+FROM string_sample
+```
+
+### REPLACE
+
+[REPLACE()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_replace): Replace occurrences of a specified string.
+
+```{sql}
+SELECT emp_name,
+  REPLACE(emp_name, ' ', ' <=> ') AS new_name
+FROM string_sample
+```
+
+### REGEXP_REPLACE
+
+[REGEXP_REPLACE()](https://dev.mysql.com/doc/refman/8.4/en/regexp.html#function_regexp-replace): Similar as replace, but use regex to match and identify the part to replace.
+
+Here is a wild example: we are replacing the first match of any letter with that symbol ' <=> '.
+```{sql}
+SELECT emp_name,
+  REGEXP_REPLACE(emp_name, '^\w', ' <=> ') AS new_name
+FROM string_sample
+```
+
+### CONCAT
+
+[CONCAT()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_concat): Glue all argument strings together as 1 string.
+
+[CONCAT_WS](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_concat-ws): Glue all argument strings With Separators.
+
+```{sql}
+SELECT emp_name,
+    SUBSTRING_INDEX(emp_name, ' ', 1) AS first_name,
+    SUBSTRING_INDEX(emp_name, ' ', -1) AS last_name,
+    CONCAT_WS(', ',
+      SUBSTRING_INDEX(emp_name, ' ', -1),
+      SUBSTRING_INDEX(emp_name, ' ', 1)) AS new_name,
+    SUBSTRING(SUBSTRING_INDEX(emp_name, ' ', 1), 1, 1) AS initial_first_name,
+    SUBSTRING(SUBSTRING_INDEX(emp_name, ' ', -1), 1, 1) AS initial_last_name,
+    CONCAT(
+      SUBSTRING(SUBSTRING_INDEX(emp_name, ' ', 1), 1, 1), 
+      SUBSTRING(SUBSTRING_INDEX(emp_name, ' ', -1), 1, 1)) AS initial
+FROM string_sample
+```
+
+## String Search
+
+### Partial Match (LIKE)
+
+![MySQL Wildcards](Pictures/LIKE.png) [Source](https://www.w3schools.com/mysql/mysql_like.asp)
+
+Example: return all employee names that has letter b or p:
+
+```{sql}
+SELECT emp_name
+FROM string_sample
+WHERE emp_name LIKE '%b%' OR emp_name LIKE '%p%'
+```
+
+If you want to enable case sensitive search:
+
+```{sql}
+SELECT emp_name
+FROM string_sample
+WHERE emp_name LIKE '%b%' OR emp_name LIKE BINARY '%p%'
+```
+
+### LOCATE
+
+[LOCATE()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_locate): Return the position of the first occurrence of substring
+
+```{sql}
+SELECT emp_name,
+    LOCATE(' ', emp_name) AS first_space,
+    LOCATE(' ', emp_name, LOCATE(' ', emp_name) + 1) AS second_space
+FROM string_sample
+```
+
+### REGEXP_LIKE
+
+You can also subset values based on regex pattern matching.
+
+For example, let's find out all of the table names with pattern like "COLUMNS\_" on the server.
+
+```{sql}
+SELECT TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME
+FROM information_schema.COLUMNS
+WHERE REGEXP_LIKE(TABLE_NAME, '^COLUMNS_')
+```
+
+Next example, let's find out all of the column names that has word date at the end.
+
+```{sql}
+SELECT TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME
+FROM information_schema.COLUMNS
+WHERE TABLE_NAME = 'invoices' AND REGEXP_LIKE(COLUMN_NAME, 'date$')
+```
+
+Last example, let's find out the position of the word "date" for all of the column names that has word date at the end.
+
+```{sql}
+SELECT TABLE_CATALOG,
+  TABLE_SCHEMA,
+  TABLE_NAME,
+  COLUMN_NAME,
+  REGEXP_INSTR(COLUMN_NAME, 'date') AS REGEXP_INSTR
+FROM information_schema.COLUMNS
+WHERE TABLE_NAME = 'invoices'
+```
+
+```{r, echo=FALSE}
+dbDisconnect(conn)
+```

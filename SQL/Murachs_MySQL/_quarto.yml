@@ -1,6 +1,6 @@
 project:
   type: book
-  output-dir: _output
+  output-dir: doc
 
 toc: true
 
@@ -13,12 +13,12 @@ book:
     - index.qmd 
     - MySQL_3_Retrieve_Data_from_Single_Table.qmd
     - MySQL_4_Retrieve_Data_from_Different_Tables.qmd
-    - MySQL-5-Summary_Queries.qmd
-    - MySQL-6-Subqueries.qmd
-    - MySQL-7-Update_Data.qmd
-    - MySQL-8-Working_with_Numeric_Data.qmd
-    - MySQL-9-Working_with_Character_Values.qmd
-    - MySQL-10-Working_with_Time.qmd
+    - MySQL_5_Summary_Queries.qmd
+    - MySQL_6_Subqueries.qmd
+    - MySQL_7_Update_Data.qmd
+    - MySQL_8_Working_with_Numeric_Data.qmd
+    - MySQL_9_Working_with_Character_Values.qmd
+    - MySQL_10_Working_with_Time.qmd
     - MySQL_11_Condition_Control.qmd
   page-navigation: true
   page-footer: "Created by Jianyuan(Andy) Hu, 2024" 
@@ -33,3 +33,4 @@ format:
     code-fold: false
     df-print: paged
     embed-resources: true
+    number-depth: 2

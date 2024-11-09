@@ -1,0 +1,243 @@
+# Update Data
+
+```{r, echo=FALSE, warning=FALSE, results='hide'}
+library(odbc)
+library(DBI)
+conn <- dbConnect(
+  drv = odbc(),
+  dsn = "Local Teaching MySQL84",
+  database = "ap"
+)
+
+# "https://yihui.org/knitr/options/"
+library(knitr)
+opts_chunk$set(connection = conn)
+# row.print works for R chucks, max.print works for SQL chucks
+opts_chunk$set(max.print = 15)
+```
+
+## Reference
+
+Default database in this chapter is "ap".
+
+Other databases included in the simulation MySQL server:
+
+-   om
+-   ex
+
+## Table Operations
+
+### Create table
+
+```{sql, echo=FALSE}
+DROP TABLE IF EXISTS invoices_copy
+```
+
+```{sql}
+CREATE TABLE invoices_copy AS 
+-- everything below can be just a standalong query, you can choose to create the new table with only certain data from the original 
+SELECT *
+FROM invoices
+```
+
+Locate the newly created table: invoices_copy in ap database:
+
+```{sql}
+SHOW TABLES
+FROM ap
+```
+### Delete Table
+Always use full 3-part naming to be sure deleting the correct table
+```{sql}
+DROP TABLE ap.invoices_copy
+```
+Confirm deleted
+```{sql}
+SHOW TABLES
+FROM ap
+WHERE Tables_in_ap = 'invoices_copy'
+```
+
+### Recreate a Table
+If you want to remove a table as long as the table exists in the database (Especially useful when you only want to create a temporary table): 
+```{sql}
+DROP TABLE IF EXISTS invoices_copy
+```
+
+## Data Operations
+Create backup table for demonstration.
+```{sql}
+CREATE TABLE invoices_copy AS 
+SELECT *
+FROM invoices
+```
+See the schema for the new table. Easier for the adding new data later...
+```{sql}
+SELECT *
+FROM invoices_copy
+LIMIT 1
+```
+Create other backup tables:
+```{sql}
+DROP TABLE IF EXISTS invoice_archive_copy
+```
+
+```{sql}
+CREATE TABLE invoice_archive_copy AS 
+SELECT *
+FROM invoice_archive
+```
+
+### INSERT: Add New Records
+Add 1 row to invoices_copy table. 
+Notice that all column values must be entered, even if it is NULL. 
+```{sql}
+INSERT INTO invoices_copy VALUES
+(115, 97, '456789', '2022-08-01', 8344.50, 0, 0, 1, '2022-08-31', NULL)
+```
+Check the new record is in place:
+```{sql}
+SELECT *
+FROM invoices_copy 
+WHERE invoice_id = 115
+```
+Add multiple records in one statement:
+```{sql}
+INSERT INTO invoices_copy VALUES
+    (116, 97, '456701', '2022-08-02', 270.50, 0, 0, 1,
+    '2022-09-01', NULL),
+    (117, 97, '456791', '2022-08-03', 4390.00, 0, 0, 1,
+    '2022-09-02', NULL),
+    (118, 97, '456792', '2022-08-03', 565.60, 0, 0, 1,
+    '2022-09-02', NULL)
+```
+Verify the new records have been added: 
+```{sql}
+SELECT *
+FROM ap.invoices_copy 
+WHERE invoice_id > 115
+```
+
+You can also copy and add a whole subset of records from one table (source table) to another (target table). To do this, you need to ensure:
+
+- Target table has all the columns in EXACTLY THE SAME names
+- Select only the same columns from the source table  
+
+Example: To copy a whole chunk of rows to invoice_arhchive. 
+
+To start with, the target table invoice_archive_copy has no records...
+```{sql}
+SELECT * 
+FROM invoice_archive_copy
+```
+Now, we add all invoices (source table) with 0 balance to the archive table.
+```{sql}
+INSERT INTO invoice_archive_copy
+    (invoice_id, vendor_id, invoice_number,
+    invoice_total, credit_total, payment_total,
+    terms_id, invoice_date, invoice_due_date)
+SELECT
+    invoice_id, vendor_id, invoice_number,
+    invoice_total, credit_total, payment_total,
+    terms_id, invoice_date, invoice_due_date
+FROM invoices_copy
+WHERE invoice_total - payment_total - credit_total = 0
+```
+Now, let's see the target table again...
+```{sql}
+SELECT * 
+FROM invoice_archive_copy
+LIMIT 10
+```
+### UPDATE: Modify Records
+
+Example: We want to manually update an invoice record with a particular invoice_number
+
+Now, let's see what it looks like before any updates
+
+```{sql}
+SELECT *
+FROM invoices_copy
+WHERE invoice_number = '97/522'
+```
+Now, we will update the payment_date and payment_total values of the same invoice:
+```{sql}
+UPDATE invoices_copy
+SET payment_date = '2022-09-21', 
+    payment_total = 19351.18
+WHERE invoice_number = '97/522'
+```
+Now, let's see what it looks like after the updates:
+```{sql}
+SELECT *
+FROM invoices_copy
+WHERE invoice_number = '97/522'
+```
+We can also update the new values with the calculation from the old values.
+
+Example: We want to increase the credit total by 100
+```{sql}
+UPDATE invoices_copy
+SET credit_total = credit_total + 100 
+/* mathmatically, this does not make sense, but here, it simply means credit_total (new) = credit_total (old) + 100 */
+WHERE invoice_number = '97/522'
+```
+
+Now, let's see what it looks like after the second update:
+```{sql}
+SELECT *
+FROM invoices_copy
+WHERE invoice_number = '97/522'
+```
+You can also use update a batch of records meeting criteria from a subquery.
+
+Example: we want to set all terms_id to 1 (instead of current 2) for a vendor with name called 'Pacific Bell'. This is only possible when querying with vendor table.
+
+Now, let's see what all invoices look with vendor Pacific Bell like, before any updates:
+```{sql}
+SELECT *
+FROM invoices_copy
+WHERE vendor_id IN
+      (SELECT vendor_id
+       FROM vendors
+       WHERE vendor_name = 'Pacific Bell')
+```
+Now, we apply the updates:
+```{sql}
+UPDATE invoices_copy
+SET terms_id = 1
+WHERE vendor_id =
+      (SELECT vendor_id
+       FROM vendors
+       WHERE vendor_name = 'Pacific Bell')
+```
+
+Now, let's see what all invoices look with vendor Pacific Bell like, after updates:
+```{sql}
+SELECT *
+FROM invoices_copy
+WHERE vendor_id IN
+      (SELECT vendor_id
+       FROM vendors
+       WHERE vendor_name = 'Pacific Bell')
+```
+**NOTE: it is a good idea to query and test the criteria (WHERE clause), before you apply any updates. The same goes to next section "DELETE", when removing records.**
+
+
+### DELETE: Remove Records
+Example: we want to remove all the last 3 inserted records: vendor_id: 116, 117, 118
+```{sql}
+DELETE FROM invoices_copy
+WHERE invoice_id >= 116
+```
+Now, let's see the result: (all records from 116 and above are gone)
+```{sql}
+SELECT *
+FROM invoices_copy
+WHERE invoice_id >= 115
+```
+
+```{r, echo=FALSE}
+dbDisconnect(conn)
+```
+

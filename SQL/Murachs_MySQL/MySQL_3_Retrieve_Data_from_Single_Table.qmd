@@ -1,21 +1,4 @@
----
-title: "Retrieve Data from Single Table"
-date: "`r format(Sys.Date(), '%B %d, %Y')`"
-author: Jianyuan(Andy) Hu
-format: 
-  html:
-    # https://github.com/quarto-dev/quarto-cli/issues/6645
-    # darkly and arrow seems work well for SQL documents
-    theme: darkly
-    highlight-style: arrow
-    revealjs: arrow
-    toc: TRUE
-    toc-location: left
-    fontsize: "14"
-    code-fold: false
-    df-print: paged
-    embed-resources: true
----
+# Retrieve Data from Single Table
 
 ```{r, echo=FALSE, warning=FALSE}
 library(odbc)
@@ -34,7 +17,7 @@ opts_chunk$set(max.print = 15)
 
 ## Reference
 
-Default database in this document is "ap".
+Default database in this chapter is "ap".
 
 Other databases included in the simulation MySQL server:
 
@@ -183,7 +166,7 @@ SELECT vendor_contact_first_name, vendor_contact_last_name,
 FROM ap.vendors
 ```
 
-We will take a deeper dive with character values here: [Working with Character Values](MySQL-9-Working_with_Character_Values.qmd).
+We will take a deeper dive with character values here: [Working with Character Values](MySQL_9_Working_with_Character_Values.qmd).
 
 ### For Working with Time
 
@@ -199,7 +182,7 @@ FROM ap.invoices
 ORDER BY invoice_date
 ```
 
-We will take a deeper dive with temporal values here: [Working with Time](MySQL-10-Working_with_Time.qmd).
+We will take a deeper dive with temporal values here: [Working with Time](MySQL_10_Working_with_Time.qmd).
 
 ### For Working with Numeric Values
 
@@ -213,7 +196,7 @@ FROM ap.invoices
 ORDER BY invoice_date
 ```
 
-We will take a deeper dive with temporal values here: [Working with Numeric Data](MySQL-8-Working_with_Numeric_Data.qmd).
+We will take a deeper dive with temporal values here: [Working with Numeric Data](MySQL_8_Working_with_Numeric_Data.qmd).
 
 ```{r}
 dbDisconnect(conn)

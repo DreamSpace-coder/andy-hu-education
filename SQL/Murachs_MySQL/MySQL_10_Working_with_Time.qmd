@@ -1,0 +1,149 @@
+# Working with Time
+
+```{r, echo=FALSE, warning=FALSE, results='hide'}
+library(odbc)
+library(DBI)
+conn <- dbConnect(
+  drv = odbc(),
+  dsn = "Local Teaching MySQL84",
+  database = "ap"
+)
+
+# "https://yihui.org/knitr/options/"
+library(knitr)
+opts_chunk$set(connection = conn)
+# row.print works for R chucks, max.print works for SQL chucks
+opts_chunk$set(max.print = 15)
+```
+
+## Reference
+
+Default database in this chapter is "ap".
+
+Other databases included in the simulation MySQL server:
+
+-   om
+-   ex
+
+## Data Type
+
+5 Different temporal data types:
+
+- Time (2:22:37)
+- DateTime (2028-10-15 2:22:37)
+- TimeStamp (2028-10-15 2:22:37 UTC)
+- Date (2028-10-15)
+- Year (2028)
+
+**Note:** Value stored in the database and displayed value are 2 different things. 
+
+For example, all of the following displayed dates have the same stored values in the database:
+
+- '2028-08-15'
+- '2028-8-15'
+- '28-8-15'
+- '20280815'
+
+All of these stored as 2028-8-15 in the database
+
+
+## Working with Time
+### Get Current Date and Time
+For more information about UTC (Coordinated Universal Time). 
+
+[UTC](https://docs.oracle.com/cd/E80921_01/html/esbc_ecz740_configuration/GUID-92C4E80E-E7C4-4D6D-8DE1-1AB69FA642FB.htm)
+
+```{sql}
+SELECT 
+  NOW(),
+  SYSDATE(),
+  CURRENT_TIMESTAMP(),
+  CURDATE(),
+  CURRENT_DATE(),
+  CURTIME(),
+  CURRENT_TIME(),
+  UTC_DATE(),
+  UTC_TIME()
+```
+## Extract Time Component
+```{sql}
+SELECT
+  invoice_due_date,
+  DAYOFMONTH(invoice_due_date),
+  MONTH(invoice_due_date),
+  YEAR(invoice_due_date),
+  HOUR(invoice_due_date),
+  MINUTE(invoice_due_date),
+  SECOND(invoice_due_date),
+  DAYOFWEEK(invoice_due_date),
+  QUARTER(invoice_due_date),
+  DAYOFYEAR(invoice_due_date),
+  WEEK(invoice_due_date),
+  LAST_DAY(invoice_due_date),
+  DAYNAME(invoice_due_date),
+  MONTHNAME(invoice_due_date)
+FROM invoices
+```
+### Format Date and Time
+
+For all different time formatting details in MySQL, see [Oracle MySQL documentation](https://dev.mysql.com/doc/refman/8.4/en/date-and-time-functions.html#function_date-format) . 
+
+```{sql}
+SELECT
+  invoice_due_date,
+  DATE_FORMAT(invoice_due_date, '%m') AS MONTH_ONLY,
+  DATE_FORMAT(invoice_due_date, '%M') AS MONTH_NAME,
+  DATE_FORMAT(invoice_due_date, '%b-%d-%Y') AS MMM_DD_YYYY
+FROM invoices
+```
+### Date Time Calculation
+```{sql}
+SELECT
+  invoice_due_date,
+  payment_date,
+  DATE_ADD(invoice_due_date,INTERVAL 9 MONTH),
+  DATE_SUB(invoice_due_date,INTERVAL 5 DAY),
+  DATEDIFF(invoice_due_date, payment_date),
+  -- very useful to ensure the calculation results in days
+  -- by default, it is calculating number of days passed by between the specified date and year 0
+  TO_DAYS(invoice_due_date)
+FROM invoices
+ORDER BY invoice_due_date
+```
+[TIME_TO_SEC()](https://dev.mysql.com/doc/refman/8.4/en/date-and-time-functions.html#function_time-to-sec): Returns the time argument, converted to seconds. Returns NULL if time is NULL.
+
+```{sql}
+SELECT 
+  NOW(),
+  HOUR(NOW()) * 3600 + MINUTE(NOW()) * 60 + SECOND(NOW()),
+  -- very useful to ensure the calculation results in seconds
+  TIME_TO_SEC(NOW())
+```
+### Search Date and Time
+
+General process:
+
+1. Specify conditions in WHERE clause;
+2. Convert/Extract date/time field to a particular format that suits your search need;
+3. Use convered/extracted values to search for targeted date/time range.
+
+For example, we would like to search for all invoices with invoice date during May 2022.
+
+```{sql}
+SELECT * 
+FROM invoices
+WHERE invoice_date BETWEEN '2022-05-01' AND '2022-05-31'
+ORDER BY invoice_date DESC
+```
+Or, alternatively:
+```{sql}
+SELECT * 
+FROM invoices
+WHERE MONTH(invoice_date) = 5 AND YEAR(invoice_date) = 2022
+ORDER BY invoice_date DESC
+```
+
+```{r, echo=FALSE}
+dbDisconnect(conn)
+```
+

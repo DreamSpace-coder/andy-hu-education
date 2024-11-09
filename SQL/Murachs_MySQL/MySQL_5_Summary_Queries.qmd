@@ -1,0 +1,287 @@
+# Grouping Data and Summary Queries
+
+```{r, echo=FALSE, warning=FALSE, results='hide'}
+library(odbc)
+library(DBI)
+conn <- dbConnect(
+  drv = odbc(),
+  dsn = "Local Teaching MySQL84",
+  database = "ap"
+)
+
+# "https://yihui.org/knitr/options/"
+library(knitr)
+opts_chunk$set(connection = conn)
+# row.print works for R chucks, max.print works for SQL chucks
+opts_chunk$set(max.print = 15)
+```
+
+## Reference
+
+Default database in this chapter is "ap".
+
+Other databases included in the simulation MySQL server:
+
+-   om
+-   ex
+
+## Aggregated Functions
+
+These are tools to calculate common summarized statistics, usually used when aggregate records to a lower granularity, hence the name "Aggregated". 
+
+A full list of aggregated functions from MySQL can be found [here](https://dev.mysql.com/doc/refman/8.4/en/aggregate-functions.html).
+
+Here is an example of getting a variety of summary stats about invoices with amount outstanding:
+
+```{sql}
+SELECT COUNT(*) AS number_of_invoices,
+    COUNT(DISTINCT vendor_id) AS number_of_vendors,
+    SUM(invoice_total - payment_total - credit_total) AS total_due,
+    MAX(invoice_total - payment_total - credit_total) AS highest_invoice_due,
+    MIN(invoice_total - payment_total - credit_total) AS lowest_invoice_due
+FROM ap.invoices
+WHERE invoice_total - payment_total - credit_total > 0
+```
+
+MIN(), MAX() can also be used to work with non-numeric values. They are essentially shortcut to:
+
+- MIN(): sort the column values in ascending order, and take the first value (such as a from a-z, or the earliest date)
+- MAX(): sort the column values in ascending order, and take the last value (such as z from a-z, or the latest date)
+
+```{sql}
+SELECT MIN(vendor_name) AS first_vendor,
+    MAX(vendor_name) AS last_vendor,
+    COUNT(vendor_name) AS number_of_vendors
+FROM ap.vendors
+```
+
+## Grouping Data: GROUP BY
+
+Grouping: the server treats the target table as if it is subset by each unique combination of values.
+
+This is useful when you need to calculate or perform operations for each of those subset independently and then combine them back to a single table. 
+
+The following is a good example: 
+
+1. it treats all records by each value in vendor_id separately;
+2. it calculates average invoice amount with invoice records by each vendor_id;
+3. it subsets, based on average of invoice_total greater than 2000;
+4. finally, it sorts the final output by calculated average amount. 
+
+**IMPORTANT:**
+
+You cannot use WHERE for aggregated results from grouped operations. 
+
+```{sql}
+SELECT vendor_id, ROUND(AVG(invoice_total), 2) AS average_invoice_amount
+FROM ap.invoices
+GROUP BY vendor_id
+HAVING AVG(invoice_total) > 2000
+ORDER BY average_invoice_amount DESC
+```
+
+However, you can continue using WHERE to subset on non-aggregated fields/dimensions. For example:
+```{sql}
+SELECT 
+    invoice_date,
+    COUNT(*) AS invoice_qty,
+    SUM(invoice_total) AS invoice_sum
+FROM invoices
+WHERE invoice_date BETWEEN '2022-06-01' AND '2022-06-30'
+GROUP BY invoice_date
+HAVING COUNT(*) > 1 
+    AND SUM(invoice_total) > 100
+ORDER BY invoice_date DESC
+```
+
+
+It also works with table joined to the target home table: 
+```{sql}
+SELECT vendor_state, vendor_city, COUNT(*) AS invoice_qty,
+    ROUND(AVG(invoice_total), 2) AS invoice_avg
+FROM ap.invoices JOIN ap.vendors
+    ON invoices.vendor_id = vendors.vendor_id
+GROUP BY vendor_state, vendor_city
+ORDER BY vendor_state, vendor_city
+```
+### Summary Row: WITH ROLLUP
+
+WITH ROLLUP keywords allow you to add a summary row at the end of each group.
+
+See the following example: we obtain the last few rows of aggregated results and an aggregated line of summary:
+
+- for each value of vendor_state
+- for overall level
+
+```{sql}
+SELECT vendor_state, vendor_city, COUNT(*) AS qty_vendors
+FROM ap.vendors
+WHERE vendor_state IN ('IA', 'NJ')
+GROUP BY vendor_state, vendor_city WITH ROLLUP
+```
+
+
+### Summary Row with Level Control: GROUPING()
+
+The best way to see what [GROUPING()](https://dev.mysql.com/blog-archive/mysql-8-0-grouping-function/) does, is to see the following examples. 
+
+First, let's what GROUPING() with different variables produces:
+```{sql}
+SELECT vendor_state,
+  vendor_city,
+  vendor_zip_code,
+  COUNT(*) AS qty_vendors,
+  GROUPING(vendor_state), 
+  GROUPING(vendor_city), 
+  GROUPING(vendor_state, vendor_city),
+  GROUPING(vendor_state, vendor_zip_code),
+  GROUPING(vendor_city, vendor_zip_code),
+  GROUPING(vendor_state, vendor_city, vendor_zip_code)
+FROM ap.vendors
+WHERE vendor_state IN ('IA', 'NJ')
+GROUP BY vendor_state, vendor_city, vendor_zip_code WITH ROLLUP
+```
+This can help us to easily identify rollup rows at different levels and then to create friendly labels at each level:
+```{sql}
+SELECT 
+  IF(GROUPING(vendor_state) = 1, 'Vendor_State_Count', vendor_state) AS vendor_state,
+  IF(GROUPING(vendor_city) = 1, 'Vendor_City_Count', vendor_city) AS vendor_city,
+  COUNT(*) AS qty_vendors
+FROM ap.vendors
+WHERE vendor_state IN ('IA', 'NJ')
+GROUP BY vendor_state, vendor_city WITH ROLLUP
+```
+If you want to see rollup rows only:
+```{sql}
+SELECT 
+  IF(GROUPING(vendor_state) = 1, 'Vendor_State_Count', vendor_state) AS vendor_state,
+  IF(GROUPING(vendor_city) = 1, 'Vendor_City_Count', vendor_city) AS vendor_city,
+  COUNT(*) AS qty_vendors
+FROM ap.vendors
+WHERE vendor_state IN ('IA', 'NJ')
+GROUP BY vendor_state, vendor_city WITH ROLLUP
+HAVING GROUPING(vendor_state) = 1 OR GROUPING(vendor_city) = 1
+```
+
+## Window: OVER(), PARTITION BY
+
+What if you would like to create grouping effect but you don't want to lose any granularity of data? This is where "window" concept cuts in. OVER() function creates a window, with PARTITION BY specifies the "grouping effect" for the windows to be created.
+
+The following example creates a sum of invoice_total at different levels. Notice that:
+
+- total_invoices: created with nothing in OVER(), it will just create a column of sum value
+- vendor_total: created with PARTITION BY in OVER(), it will create subtotals by each value of vendor_id
+- you don't lose any granularity of the data, you can still choose all the columns from invoices table that you wish to include.
+- you can still use WHERE to subset for target table.
+
+```{sql}
+SELECT vendor_id,
+  invoice_date,
+  invoice_total,
+  SUM(invoice_total) OVER() AS total_invoices,
+  SUM(invoice_total) OVER(PARTITION BY vendor_id) AS vendor_total
+FROM ap.invoices
+WHERE invoice_total > 5000
+```
+
+### Running Windows: OVER(), PARTITION BY, ORDER BY
+
+Comparing with the above, with ORDER BY added, we are now calculating running total for each vendor as each invoice being issued for the same vendor.
+
+"ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW": determines the running total behaviour. It says operations performed for all rows up to this current row. See window function for vendor_id 110 in action. 
+```{sql}
+SELECT 
+  vendor_id,
+  invoice_date,
+  invoice_total,
+  SUM(invoice_total) OVER() AS total_invoices,
+  SUM(invoice_total) OVER(PARTITION BY vendor_id
+    ORDER BY invoice_date
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS vendor_total
+FROM ap.invoices
+WHERE invoice_total > 5000
+```
+
+You can modify the "width" of the window. See the following: 
+
+- **ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING**: allows you to use 1 row up (if any) and 1 row down (if any) relative to the current row to make calculation. Obviously you can change to any numbers as you wish. 
+- Now it calculates the average invoice total amounts based on rolling 3 invoice_dates. 
+```{sql}
+SELECT vendor_id,
+  invoice_date,
+  invoice_total,
+  SUM(invoice_total) OVER() AS total_invoices,
+  ROUND(AVG(invoice_total) OVER(PARTITION BY vendor_id 
+    ORDER BY invoice_date 
+    ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING), 2) AS vendor_total
+FROM ap.invoices
+WHERE invoice_total > 5000
+```
+If you need to modify the window based on range of a value you can use RANGE instead of ROW keyword. 
+
+The following specifies the window to be based on invoice_date and treat a day before and a day after as the same range. (See vendor_id 110 and between 2022-07-19 and 2022-07-31):
+```{sql}
+SELECT vendor_id,
+  invoice_date,
+  invoice_total,
+  SUM(invoice_total) OVER() AS total_invoices,
+  SUM(invoice_total) OVER(PARTITION BY vendor_id 
+    ORDER BY invoice_date 
+    RANGE BETWEEN INTERVAL 1 DAY PRECEDING AND INTERVAL 1 DAY FOLLOWING) AS vendor_total
+FROM ap.invoices
+WHERE invoice_total > 5000
+```
+
+### Create Row Index
+
+The following creates row_number for each group by vendor_state: 
+
+```{sql}
+SELECT
+  ROW_NUMBER() OVER(PARTITION BY vendor_state ORDER BY vendor_name) AS 'row_number',
+  vendor_name,
+  vendor_state
+FROM ap.vendors
+```
+The following compares the differences among rankings and row index: 
+
+```{sql}
+SELECT 
+  vendor_id,
+  invoice_total,
+  invoice_number,
+  ROW_NUMBER() OVER (PARTITION BY vendor_id ORDER BY invoice_total) AS 'row_id', 
+  RANK() OVER (PARTITION BY vendor_id ORDER BY invoice_total) AS 'rank', 
+  DENSE_RANK() OVER (PARTITION BY vendor_id ORDER BY invoice_total) AS 'dense_rank'
+FROM ap.invoices
+```
+### Create Lags and Leads
+
+[LAG()](https://dev.mysql.com/doc/refman/8.4/en/window-function-descriptions.html#function_lag): Allows to "push each record down" and lines up the current row value with the value from last row.
+[LEAD()](https://dev.mysql.com/doc/refman/8.4/en/window-function-descriptions.html#function_lead): Allows to "pull each record up" and lines up the current row value with the value from next row.
+
+These are useful to compare results for year over year, month over month etc.
+
+Also notice here that "WINDOW" clause allows to create alias of a particular type of window, so you don't have to repeat the specifications for OVER() each time.
+
+```{sql}
+SELECT 
+  rep_id, 
+  sales_year,
+  -- lag series
+  sales_total AS current_sales,
+  LAG(sales_total, 1, 0) OVER rep_window AS last_sales,
+  Sales_total - LAG(sales_total, 1, 0) OVER rep_window AS change_from_last,
+  -- lead series
+  sales_total AS current_sales_again,
+  LEAD(sales_total, 1, 0) OVER rep_window AS next_sales,
+  LEAD(sales_total, 1, 0) OVER rep_window - Sales_total AS change_from_current
+FROM ex.sales_totals
+WINDOW rep_window AS (PARTITION BY rep_id ORDER BY sales_year)
+```
+
+
+```{r, echo=FALSE}
+dbDisconnect(conn)
+```
+

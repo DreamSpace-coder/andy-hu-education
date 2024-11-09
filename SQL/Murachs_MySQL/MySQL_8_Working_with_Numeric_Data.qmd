@@ -1,0 +1,92 @@
+# Working with Numeric Data
+
+```{r, echo=FALSE, warning=FALSE, results='hide'}
+library(odbc)
+library(DBI)
+conn <- dbConnect(
+  drv = odbc(),
+  dsn = "Local Teaching MySQL84",
+  database = "ex"
+)
+
+# "https://yihui.org/knitr/options/"
+library(knitr)
+opts_chunk$set(connection = conn)
+# row.print works for R chucks, max.print works for SQL chucks
+opts_chunk$set(max.print = 15)
+```
+
+## Reference
+
+Default database in this chapter is "ex".
+
+Other databases included in the simulation MySQL server:
+
+-   om
+-   ap
+
+## Numeric Data
+
+### Main Types
+Integer(INT type): no decimal places.
+
+Fixed-point(DECIMAL type): up to 9 decimal places.
+
+- Because there are finite number of decimal places, they are exact numeric type.
+
+Floating-point (shortly floating, DOUBLE/FLOAT type) values are numeric values with unlimited number of decimal places.
+
+- Because there are unlimited number of decimal places, they are approximate numeric type.
+
+### Other Concepts
+Precision: number of digit (e.g. 120.98 has a precision of 5, as in 5 digits in total)
+
+Scale: number of decimal places (e.g. 120.98 has a scale of 2, as in 2 decimal places)
+
+## Numeric Data Manipulation
+
+### Managing Rounding and Scale
+
+```{sql}
+SELECT 
+  float_value,
+  ROUND(float_value, 3),
+  TRUNCATE(float_value, 3),
+  CEILING(float_value),
+  FLOOR(float_value)
+FROM float_sample
+```
+**Note:** negative values are evaluated together with their negativity. 
+
+```{sql}
+SELECT 
+  CEILING(-12.4567),
+  FLOOR(-12.4567)
+```
+### Calcuation
+```{sql}
+SELECT 
+  float_value,
+  ABS(float_value),
+  -- SIGN(float_value),
+  SQRT(float_value),
+  POWER(float_value, 3)
+FROM float_sample
+```
+### Random Number Generation
+RAND() function doesn't require any input to work, i.e. they will generate random numbers anyways.
+
+The integer as an argument is called "seed". This is used to ensure everytime the query run it will create exactly the same set of random numbers.
+
+```{sql}
+SELECT
+  float_value,
+  RAND(123)
+FROM float_sample
+```
+
+
+```{r, echo=FALSE}
+dbDisconnect(conn)
+```
+

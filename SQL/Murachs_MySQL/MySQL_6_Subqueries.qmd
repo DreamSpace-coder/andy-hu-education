@@ -1,0 +1,474 @@
+# Subqueries
+
+```{r, echo=FALSE, warning=FALSE, results='hide'}
+library(odbc)
+library(DBI)
+conn <- dbConnect(
+  drv = odbc(),
+  dsn = "Local Teaching MySQL84",
+  database = "ap"
+)
+
+# "https://yihui.org/knitr/options/"
+library(knitr)
+opts_chunk$set(connection = conn)
+# row.print works for R chucks, max.print works for SQL chucks
+opts_chunk$set(max.print = 15)
+```
+
+## Reference
+
+Default database in this chapter is "ap".
+
+Other databases included in the simulation MySQL server:
+
+-   om
+-   ex
+
+## Subqueries
+
+### What
+
+Sometimes we want to express complex logic as part of the main query and wish that we could just write another standalone query for that logic.
+
+Example: in WHERE or HAVING clause, we want to match/exclude only a specific set of values from another table that involves more complex subsetting in its own.
+
+### Why
+
+- More clear description of what complex logic taking place outside of main query.
+- More possibilities and flexibility to query data within one main query.
+
+### Example
+
+The following subquery (getting vendor_id from vendors table where vendor_state is California) allows us subset invoices table based on vendor criteria in vendors table.
+
+As you can imagine, if we need more complicated logic to subset for vendor_id, we can specify more in WHERE clause in the subquery. 
+- much more expressive and telling how we select vendor_ids
+- more flexible if we need to add more logic/other operations in vendors table
+
+```{sql}
+SELECT invoice_number, invoice_date, invoice_total
+FROM invoices
+WHERE vendor_id IN
+    (SELECT vendor_id
+     FROM vendors
+     WHERE vendor_state = 'CA')
+ORDER BY invoice_date
+LIMIT 15
+```
+
+## Use Cases
+
+### Compare with an Aggregated Result
+
+Here we want to retrieve all invoice records:
+
+- with balance due > 0
+- with balance_due below average of outstanding balance due
+
+First, let's see what average balance due looks like:
+```{sql}
+SELECT AVG(invoice_total - payment_total - credit_total)
+FROM invoices
+WHERE invoice_total - payment_total - credit_total > 0
+```
+
+Second, let's see what invoices balance due look like:
+```{sql}
+SELECT invoice_number, invoice_date, 
+    invoice_total - payment_total - credit_total AS balance_due
+FROM invoices
+ORDER BY balance_due DESC
+LIMIT 15
+```
+Third, let's see what invoices below average balance due look like:
+```{sql}
+SELECT invoice_number, invoice_date, 
+    invoice_total - payment_total - credit_total AS balance_due
+FROM invoices
+WHERE invoice_total - payment_total - credit_total <
+    (
+     SELECT AVG(invoice_total - payment_total - credit_total)
+     FROM invoices
+     WHERE invoice_total - payment_total - credit_total > 0
+    )
+ORDER BY balance_due DESC
+```
+Lastly, filter out all of the invoices without any balance due:
+```{sql}
+SELECT invoice_number, invoice_date, 
+    invoice_total - payment_total - credit_total AS balance_due
+FROM invoices
+WHERE invoice_total - payment_total - credit_total <
+    (
+     SELECT AVG(invoice_total - payment_total - credit_total)
+     FROM invoices
+     WHERE invoice_total - payment_total - credit_total > 0
+    ) AND invoice_total - payment_total - credit_total > 0
+ORDER BY balance_due DESC
+```
+### Common Table Expressions (CTE)
+#### Introduction
+CTE allows you to assign nicknames for the output of your subqueries and then use the nicknames to go on to finish the main query.
+
+Example, we want to write a query to:
+
+- get a vendor from each state 
+- this vendor has the highest total invoice amount in that state
+- list all states with highest vendor invoice total in that state, and its vendor name
+
+First, let's get all vendors and their total invoices together:
+```{sql}
+SELECT vendor_state, 
+    vendor_name,
+    invoice_total
+FROM vendors v INNER JOIN invoices i 
+    ON v.vendor_id = i.vendor_id
+```
+Second, let's get total invoice amount by vendors and states
+```{sql}
+SELECT vendor_state, 
+    vendor_name,
+    SUM(invoice_total) AS sum_of_invoices
+FROM vendors v INNER JOIN invoices i 
+    ON v.vendor_id = i.vendor_id
+GROUP BY vendor_state, vendor_name
+```
+Third, now, we need to create a nickname for this result so that we can base on the result of that query to select the max total invoice amount by state:
+```{sql}
+WITH summary AS
+
+(SELECT vendor_state, 
+    vendor_name,
+    SUM(invoice_total) AS sum_of_invoices
+FROM vendors v INNER JOIN invoices i 
+    ON v.vendor_id = i.vendor_id
+GROUP BY vendor_state, vendor_name)
+
+SELECT vendor_state,
+    MAX(sum_of_invoices) AS sum_of_invoices
+FROM summary
+GROUP BY vendor_state 
+```
+Lastly, we create nicknames for both results (yes, you can create CTE for any query that you wish to assign) and write the final query to get selected vendor names to each state and sum_of_invoices. (hnit: use inner join)
+```{sql}
+WITH summary AS
+(
+SELECT vendor_state, 
+    vendor_name,
+    SUM(invoice_total) AS sum_of_invoices
+FROM vendors v INNER JOIN invoices i 
+    ON v.vendor_id = i.vendor_id
+GROUP BY vendor_state, vendor_name
+),
+top_in_state AS
+(
+SELECT vendor_state,
+    MAX(sum_of_invoices) AS sum_of_invoices
+FROM summary
+GROUP BY vendor_state
+)
+
+SELECT summary.vendor_state, summary.vendor_name,
+       top_in_state.sum_of_invoices
+FROM summary INNER JOIN top_in_state
+    ON summary.vendor_state = top_in_state.vendor_state AND
+       summary.sum_of_invoices = top_in_state.sum_of_invoices
+ORDER BY summary.vendor_state
+```
+#### Recursive 
+
+Recursive querying can loop through a result set and perform processing to return a final result set. This is similar to "while loop" in other programming languages such as R, Python. 
+
+This is commonly used when you want to build a dataset reflecting on hierarchy: one parent record has many child records, each child record can have their own child records. For example, see the employees table where there are multiple managing levels embedded.
+
+```{sql}
+SELECT *
+FROM ex.employees
+```
+
+Example: we will build an employee dataset with ranking order. Each employee has the same staff level will have the same ranking. 
+
+First, we start at the top of the hierachy.
+```{sql}
+SELECT employee_id, 
+    CONCAT(first_name, ' ', last_name) AS employee_name,
+    1 AS ranking
+FROM ex.employees
+WHERE manager_id IS NULL
+```
+
+Second, we experiment with the next level where staff are directly managed by employee_id 1. At this stage, they should have ranking increased by 1, as they are level 2 staff. 
+```{sql}
+WITH employees_cte AS
+(
+SELECT employee_id, 
+    CONCAT(first_name, ' ', last_name) AS employee_name,
+    1 AS ranking
+FROM ex.employees
+WHERE manager_id IS NULL
+)
+
+SELECT employees.employee_id, 
+    CONCAT(employees.first_name, ' ', employees.last_name) AS employee_name,
+    1+1 AS ranking
+FROM ex.employees INNER JOIN employees_cte ON employees.manager_id = employees_cte.employee_id
+WHERE employees.employee_id = 2
+```
+Notice that if employees have the same level of manager at this point, it will all be returned with the same level of ranking. This is ensured by the "inner join" to employees table.
+```{sql}
+WITH employees_cte AS
+(
+SELECT employee_id, 
+    CONCAT(first_name, ' ', last_name) AS employee_name,
+    1 AS ranking
+FROM ex.employees
+WHERE manager_id IS NULL
+)
+
+SELECT employees.employee_id, 
+    CONCAT(employees.first_name, ' ', employees.last_name) AS employee_name,
+    1+1 AS ranking
+FROM ex.employees INNER JOIN employees_cte ON employees.manager_id = employees_cte.employee_id
+WHERE employees.employee_id = 9
+```
+If the employee doesn't have the same management at this time in the employees_cte expression, the result will be empty.
+```{sql}
+WITH employees_cte AS
+(
+SELECT employee_id, 
+    CONCAT(first_name, ' ', last_name) AS employee_name,
+    1 AS ranking
+FROM ex.employees
+WHERE manager_id IS NULL
+)
+
+SELECT employees.employee_id, 
+    CONCAT(employees.first_name, ' ', employees.last_name) AS employee_name,
+    1+1 AS ranking
+FROM ex.employees INNER JOIN employees_cte ON employees.manager_id = employees_cte.employee_id
+WHERE employees.employee_id = 8
+```
+
+Third, imagine the following is happening:
+
+1. We are going through this exercise second time, add all of the second level of staff with ranking 2 and append to employees_cte;
+2. We are going through this exercise third time and add all of the third level of staff with ranking 3 and append to employees_cte;
+3. We are not stopping until we have every record remaining all return empty (i.e. nothing to further append to employees_cte).
+
+Now, we have the following SQL statement to manifest that logic above.
+
+With "UNION ALL", we need to make sure your recursive query should have exactly the same columns and column names with the initial query. 
+```{sql}
+WITH RECURSIVE employees_cte AS
+(
+-- Nonrecursive query
+SELECT employee_id, 
+    CONCAT(first_name, ' ', last_name) AS employee_name,
+    1 AS ranking
+FROM ex.employees
+WHERE manager_id IS NULL
+
+-- this to make sure the "append" action is taking place after each loop
+UNION ALL 
+
+-- Recursive query
+SELECT employees.employee_id, 
+    CONCAT(first_name, ' ', last_name), 
+    ranking + 1
+FROM ex.employees
+    INNER JOIN employees_cte
+    ON employees.manager_id = employees_cte.employee_id
+)
+
+SELECT *
+FROM employees_cte
+ORDER BY ranking, employee_id
+```
+### Use Subquery in FROM
+
+Here, we want a query that: 
+
+- Gets the names of all vendors.
+- Finds the latest invoice date for each vendor.
+- Lists the vendors with the most recent invoices at the top.
+
+First, let's see total invoice amounts by vendor name and invoice date
+```{sql}
+SELECT vendor_name, invoice_date
+FROM invoices i LEFT JOIN vendors v ON i.vendor_id = v.vendor_id
+```
+Second, let's see the latest invoice date by each vendor
+```{sql}
+SELECT vendor_name, MAX(invoice_date) AS latest_inv
+FROM 
+( SELECT vendor_name, invoice_date
+  FROM invoices i LEFT JOIN vendors v ON i.vendor_id = v.vendor_id ) t
+GROUP BY vendor_name
+ORDER BY latest_inv DESC
+```
+
+### Alternative: Use Subquery in SELECT
+
+This is a second solution to the same problem statement:
+
+"We want a query that: 
+
+- Gets the names of all vendors.
+- Finds the latest invoice date for each vendor.
+- Lists the vendors with the most recent invoices at the top."
+
+
+```{sql}
+SELECT vendor_name,
+    (SELECT MAX(invoice_date) 
+     FROM invoices
+     WHERE vendor_id = vendors.vendor_id) AS latest_inv
+FROM vendors
+ORDER BY latest_inv DESC
+```
+
+### Another Alternative: Use CTE
+Now, we have learned common table expression and let's see another implementation of this query.
+First, let's see all invoices of their latest invoice date
+```{sql}
+SELECT vendor_id, MAX(invoice_date) 
+FROM invoices
+GROUP BY vendor_id
+```
+Second, we can create a common table expression for the aggregated result above and use join mechanism to bring vendor name and other information from vendor table
+```{sql}
+WITH t AS 
+(SELECT vendor_id, MAX(invoice_date) AS latest_inv
+FROM invoices
+GROUP BY vendor_id)
+
+SELECT vendor_name, latest_inv 
+FROM vendors LEFT JOIN t ON t.vendor_id = vendors.vendor_id
+ORDER BY latest_inv DESC
+```
+## Write Complex Queries
+
+1. State the problem to be solved by the query in plain language.
+2. Use pseudocode to outline the query.
+3. Code the subqueries and test them to be sure that they return the correct data.
+4. Code and test the final query.
+
+```{sql}
+SELECT t1.vendor_state, vendor_name, t1.sum_of_invoices
+FROM
+(
+    -- sum of invoice totals by vendor
+    SELECT vendor_state, vendor_name,
+        SUM(invoice_total) AS sum_of_invoices
+    FROM vendors v JOIN invoices i 
+        ON v.vendor_id = i.vendor_id
+    GROUP BY vendor_state, vendor_name
+) t1
+
+JOIN
+(
+  -- top sum of invoice totals by state
+  SELECT vendor_state,  
+         MAX(sum_of_invoices)
+         AS sum_of_invoices
+  FROM
+  (
+    -- sum of invoice totals by vendor
+    SELECT vendor_state, vendor_name,
+        SUM(invoice_total)
+        AS sum_of_invoices
+    FROM vendors v JOIN invoices i 
+        ON v.vendor_id = i.vendor_id
+    GROUP BY vendor_state, vendor_name
+  ) t2
+  GROUP BY vendor_state
+) t3
+    ON t1.vendor_state = t3.vendor_state AND 
+       t1.sum_of_invoices = t3.sum_of_invoices
+ORDER BY vendor_state
+```
+
+
+## Logical Operators
+The best way to understand logical operators is to put them into use. 
+
+### ALL
+
+- x > ALL (1, 2) <=> x > 2
+- x < ALL (1, 2) <=> x < 1
+- x = ALL (1, 2) <=> (x = 1) AND (x = 2)
+- x != ALL (1, 2)<=> x NOT IN (1, 2)
+
+Example: we want to get all of the invoices with invoice_totals > the largest invoice_totals from vendor with vendor_id 34.
+```{sql}
+SELECT vendor_name, invoice_number, invoice_total
+FROM invoices i JOIN vendors v ON i.vendor_id = v.vendor_id
+WHERE invoice_total > ALL
+    (SELECT invoice_total
+     FROM invoices
+     WHERE vendor_id = 34)
+ORDER BY vendor_name
+```
+### ANY
+
+- x > ANY (1, 2) <=> x > 1
+- x < ANY (1, 2) <=> x < 2
+- x = ANY (1, 2) <=> x IN (1, 2)
+- x != ANY (1, 2) <=> (x != 1) OR (x != 2)
+
+Example: we want to get all of the invoices with invoice_totals < the largest invoice_totals from vendor with vendor_id 115.
+```{sql}
+SELECT vendor_name, invoice_number, invoice_total
+FROM vendors JOIN invoices
+  ON vendors.vendor_id = invoices.vendor_id
+WHERE invoice_total < ANY
+    (SELECT invoice_total
+     FROM invoices
+     WHERE vendor_id = 115)
+```
+### IN
+
+If a value is in a list of values. 
+
+Subquery should return a single column (i.e. a list of values).
+
+Example: the following returns all vendor names and their state where they have invoice total less than $100.
+```{sql}
+SELECT vendor_name, vendor_state
+FROM vendors
+WHERE vendor_name IN 
+  ( SELECT vendor_name
+    FROM invoices i INNER JOIN vendors v ON i.vendor_id = v.vendor_id
+    WHERE invoice_total < 100)
+ORDER BY vendor_name
+```
+
+### EXSITS
+
+Example: The following gets all of vendors with existing invoices
+
+```{sql}
+SELECT vendor_id, vendor_name, vendor_state
+FROM vendors
+WHERE EXISTS
+    (SELECT * 
+     FROM invoices
+     WHERE vendor_id = vendors.vendor_id)
+```
+
+To negate, i.e. to find all vendors that don't have any invoices yet. ("NOT EXISTS")
+
+```{sql}
+SELECT vendor_id, vendor_name, vendor_state
+FROM vendors
+WHERE NOT EXISTS
+    (SELECT * 
+     FROM invoices
+     WHERE vendor_id = vendors.vendor_id)
+```
+
+```{r, echo=FALSE}
+dbDisconnect(conn)
+```
+

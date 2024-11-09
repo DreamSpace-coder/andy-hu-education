@@ -1,20 +1,4 @@
----
-title: "Retrieve Data from 2 or More Tables"
-date: "`r format(Sys.Date(), '%B %d, %Y')`"
-author: Jianyuan(Andy) Hu
-format: 
-  html:
-    # https://github.com/quarto-dev/quarto-cli/issues/6645
-    # darkly and arrow seems work well for SQL documents
-    theme: darkly
-    highlight-style: arrow
-    toc: TRUE
-    toc-location: left
-    fontsize: "14"
-    code-fold: false
-    df-print: paged
-    embed-resources: true
----
+# Retrieve Data from 2 or More Tables
 
 ```{r, echo=FALSE, warning=FALSE, results='hide'}
 library(odbc)
@@ -34,7 +18,7 @@ opts_chunk$set(max.print = 15)
 
 ## Reference
 
-Default database in this document is "ap".
+Default database in this chapter is "ap".
 
 Other databases included in the simulation MySQL server:
 
