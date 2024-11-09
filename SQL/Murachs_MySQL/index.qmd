@@ -1,0 +1,13 @@
+# Preface {.unnumbered}
+
+## What
+
+This workbook is designed for my students to learn basics of SQL using MySQL database as the database environment. Many data and examples used in this work are from Murach, J. (2023). [Murach’s MySQL (4th Edition)](https://www.murach.com/shop/murach-s-mysql-4th-edition-detail) and its accompanied resources.
+
+## Why 
+
+Throughout my various teaching experiences, especially at the beginner's level, I noitced that students may find it awkward learning from a SQL terminal, database server workbench or PowerPoint slide deck lacks of interactivity between various SQL code chunks and their outputs. This workbook reduces the gap by introducing variours topics in highly precise terms and tight connection between the codes and their server outputs. Fundamentally, this work intends to help students navigate various SQL and database related topics more easily and friendly. 
+
+## How 
+
+This workbook can be used both independently on its own or can be used closely with Murach’s MySQL (4th Edition). However, please keep in mind that this workbook introduces topics and database knowledge differently from the Murach’s MySQL (4th Edition).

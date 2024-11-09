@@ -32,13 +32,7 @@ opts_chunk$set(connection = conn)
 opts_chunk$set(max.print = 15)
 ```
 
-# Purpose
-
-This document is created to better illustrate and teach SQL (MySQL) for students in my course: Introduction to SQL and Database Management Techniques.
-
-# Reference
-
-This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+## Reference
 
 Default database in this document is "ap".
 
@@ -47,9 +41,9 @@ Other databases included in the simulation MySQL server:
 -   om
 -   ex
 
-# Table Operations
+## Table Operations
 
-## Create table
+### Create table
 
 ```{sql, echo=FALSE}
 DROP TABLE IF EXISTS invoices_copy
@@ -62,13 +56,13 @@ SELECT *
 FROM invoices
 ```
 
-locate the newly created table: invoices_copy in ap database:
+Locate the newly created table: invoices_copy in ap database:
 
 ```{sql}
 SHOW TABLES
 FROM ap
 ```
-## Delete Table
+### Delete Table
 Always use full 3-part naming to be sure deleting the correct table
 ```{sql}
 DROP TABLE ap.invoices_copy
@@ -80,13 +74,13 @@ FROM ap
 WHERE Tables_in_ap = 'invoices_copy'
 ```
 
-## Recreate a Table
+### Recreate a Table
 If you want to remove a table as long as the table exists in the database (Especially useful when you only want to create a temporary table): 
 ```{sql}
 DROP TABLE IF EXISTS invoices_copy
 ```
 
-# Data Operations
+## Data Operations
 Create backup table for demonstration.
 ```{sql}
 CREATE TABLE invoices_copy AS 
@@ -110,7 +104,7 @@ SELECT *
 FROM invoice_archive
 ```
 
-## INSERT: Add New Records
+### INSERT: Add New Records
 Add 1 row to invoices_copy table. 
 Notice that all column values must be entered, even if it is NULL. 
 ```{sql}
@@ -171,7 +165,7 @@ SELECT *
 FROM invoice_archive_copy
 LIMIT 10
 ```
-## UPDATE: Modify Records
+### UPDATE: Modify Records
 
 Example: We want to manually update an invoice record with a particular invoice_number
 
@@ -246,7 +240,7 @@ WHERE vendor_id IN
 **NOTE: it is a good idea to query and test the criteria (WHERE clause), before you apply any updates. The same goes to next section "DELETE", when removing records.**
 
 
-## DELETE: Remove Records
+### DELETE: Remove Records
 Example: we want to remove all the last 3 inserted records: vendor_id: 116, 117, 118
 ```{sql}
 DELETE FROM invoices_copy

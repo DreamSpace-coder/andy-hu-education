@@ -32,12 +32,7 @@ opts_chunk$set(connection = conn)
 opts_chunk$set(max.print = 15)
 ```
 
-# Purpose
-
-This document is created to better illustrate and teach SQL (MySQL) for students in my course: Introduction to SQL and Database Management Techniques.
-# Reference
-
-This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+## Reference
 
 Default database in this document is "ap".
 
@@ -46,20 +41,20 @@ Other databases included in the simulation MySQL server:
 -   om
 -   ex
 
-# Subqueries
+## Subqueries
 
-## What
+### What
 
 Sometimes we want to express complex logic as part of the main query and wish that we could just write another standalone query for that logic.
 
 Example: in WHERE or HAVING clause, we want to match/exclude only a specific set of values from another table that involves more complex subsetting in its own.
 
-## Why
+### Why
 
 - More clear description of what complex logic taking place outside of main query.
 - More possibilities and flexibility to query data within one main query.
 
-## Example
+### Example
 
 The following subquery (getting vendor_id from vendors table where vendor_state is California) allows us subset invoices table based on vendor criteria in vendors table.
 
@@ -78,9 +73,9 @@ ORDER BY invoice_date
 LIMIT 15
 ```
 
-# Use Cases
+## Use Cases
 
-## Compare with an Aggregated Result
+### Compare with an Aggregated Result
 
 Here we want to retrieve all invoice records:
 
@@ -128,8 +123,8 @@ WHERE invoice_total - payment_total - credit_total <
     ) AND invoice_total - payment_total - credit_total > 0
 ORDER BY balance_due DESC
 ```
-## Common Table Expressions (CTE)
-### Introduction
+### Common Table Expressions (CTE)
+#### Introduction
 CTE allows you to assign nicknames for the output of your subqueries and then use the nicknames to go on to finish the main query.
 
 Example, we want to write a query to:
@@ -197,7 +192,7 @@ FROM summary INNER JOIN top_in_state
        summary.sum_of_invoices = top_in_state.sum_of_invoices
 ORDER BY summary.vendor_state
 ```
-### Recursive 
+#### Recursive 
 
 Recursive querying can loop through a result set and perform processing to return a final result set. This is similar to "while loop" in other programming languages such as R, Python. 
 
@@ -306,7 +301,7 @@ SELECT *
 FROM employees_cte
 ORDER BY ranking, employee_id
 ```
-## Use Subquery in FROM
+### Use Subquery in FROM
 
 Here, we want a query that: 
 
@@ -329,7 +324,7 @@ GROUP BY vendor_name
 ORDER BY latest_inv DESC
 ```
 
-## Alternative: Use Subquery in SELECT
+### Alternative: Use Subquery in SELECT
 
 This is a second solution to the same problem statement:
 
@@ -349,7 +344,7 @@ FROM vendors
 ORDER BY latest_inv DESC
 ```
 
-## Another Alternative: Use CTE
+### Another Alternative: Use CTE
 Now, we have learned common table expression and let's see another implementation of this query.
 First, let's see all invoices of their latest invoice date
 ```{sql}
@@ -368,7 +363,7 @@ SELECT vendor_name, latest_inv
 FROM vendors LEFT JOIN t ON t.vendor_id = vendors.vendor_id
 ORDER BY latest_inv DESC
 ```
-# Write Complex Queries
+## Write Complex Queries
 
 1. State the problem to be solved by the query in plain language.
 2. Use pseudocode to outline the query.
@@ -411,10 +406,10 @@ ORDER BY vendor_state
 ```
 
 
-# Logical Operators
+## Logical Operators
 The best way to understand logical operators is to put them into use. 
 
-## ALL
+### ALL
 
 - x > ALL (1, 2) <=> x > 2
 - x < ALL (1, 2) <=> x < 1
@@ -431,7 +426,7 @@ WHERE invoice_total > ALL
      WHERE vendor_id = 34)
 ORDER BY vendor_name
 ```
-## ANY
+### ANY
 
 - x > ANY (1, 2) <=> x > 1
 - x < ANY (1, 2) <=> x < 2
@@ -448,7 +443,7 @@ WHERE invoice_total < ANY
      FROM invoices
      WHERE vendor_id = 115)
 ```
-## IN
+### IN
 
 If a value is in a list of values. 
 
@@ -465,8 +460,7 @@ WHERE vendor_name IN
 ORDER BY vendor_name
 ```
 
-
-## EXSITS
+### EXSITS
 
 Example: The following gets all of vendors with existing invoices
 

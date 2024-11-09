@@ -32,13 +32,7 @@ opts_chunk$set(connection = conn)
 opts_chunk$set(max.print = 15)
 ```
 
-# Purpose
-
-This document is created to better illustrate and teach SQL (MySQL) for students in my course: Introduction to SQL and Database Management Techniques.
-
-# Reference
-
-This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+## Reference
 
 Default database in this document is "ex".
 
@@ -47,9 +41,9 @@ Other databases included in the simulation MySQL server:
 -   om
 -   ap
 
-# Numeric Data
+## Numeric Data
 
-## Main Types
+### Main Types
 Integer(INT type): no decimal places.
 
 Fixed-point(DECIMAL type): up to 9 decimal places.
@@ -60,14 +54,14 @@ Floating-point (shortly floating, DOUBLE/FLOAT type) values are numeric values w
 
 - Because there are unlimited number of decimal places, they are approximate numeric type.
 
-## Other Concepts
+### Other Concepts
 Precision: number of digit (e.g. 120.98 has a precision of 5, as in 5 digits in total)
 
 Scale: number of decimal places (e.g. 120.98 has a scale of 2, as in 2 decimal places)
 
-# Numeric Data Manipulation
+## Numeric Data Manipulation
 
-## Managing Rounding and Scale
+### Managing Rounding and Scale
 
 ```{sql}
 SELECT 
@@ -85,7 +79,7 @@ SELECT
   CEILING(-12.4567),
   FLOOR(-12.4567)
 ```
-## Calcuation
+### Calcuation
 ```{sql}
 SELECT 
   float_value,
@@ -95,7 +89,7 @@ SELECT
   POWER(float_value, 3)
 FROM float_sample
 ```
-## Random Number Generation
+### Random Number Generation
 RAND() function doesn't require any input to work, i.e. they will generate random numbers anyways.
 
 The integer as an argument is called "seed". This is used to ensure everytime the query run it will create exactly the same set of random numbers.

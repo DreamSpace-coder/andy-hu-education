@@ -1,0 +1,35 @@
+project:
+  type: book
+  output-dir: _output
+
+toc: true
+
+book:
+  title: "Workbook for Introductory SQL"
+  subtitle: "For My Students to Learn Introduction to SQL and Database Administration"
+  author: "Jianyuan(Andy) Hu"
+  date: "2024-11-01"
+  chapters:
+    - index.qmd 
+    - MySQL_3_Retrieve_Data_from_Single_Table.qmd
+    - MySQL_4_Retrieve_Data_from_Different_Tables.qmd
+    - MySQL-5-Summary_Queries.qmd
+    - MySQL-6-Subqueries.qmd
+    - MySQL-7-Update_Data.qmd
+    - MySQL-8-Working_with_Numeric_Data.qmd
+    - MySQL-9-Working_with_Character_Values.qmd
+    - MySQL-10-Working_with_Time.qmd
+    - MySQL_11_Condition_Control.qmd
+  page-navigation: true
+  page-footer: "Created by Jianyuan(Andy) Hu, 2024" 
+
+format:
+  html:
+    theme: darkly
+    highlight-style: arrow
+    toc: TRUE
+    toc-location: left
+    fontsize: "14"
+    code-fold: false
+    df-print: paged
+    embed-resources: true

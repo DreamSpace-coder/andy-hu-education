@@ -32,9 +32,7 @@ opts_chunk$set(connection = conn)
 opts_chunk$set(max.print = 15)
 ```
 
-# Reference
-
-This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+## Reference
 
 Default database in this document is "ap".
 
@@ -43,7 +41,7 @@ Other databases included in the simulation MySQL server:
 -   om
 -   ex
 
-# Ranking
+## Ranking
 
 ```{sql}
 SELECT ROW_NUMBER() OVER(PARTITION BY vendor_state ORDER BY vendor_name) AS 'row_number', vendor_name,

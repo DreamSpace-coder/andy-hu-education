@@ -1,5 +1,5 @@
 ---
-title: "Data Types"
+title: "Working with Time"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 author: Jianyuan(Andy) Hu
 format: 
@@ -32,13 +32,7 @@ opts_chunk$set(connection = conn)
 opts_chunk$set(max.print = 15)
 ```
 
-# Purpose
-
-This document is created to better illustrate and teach SQL (MySQL) for students in my course: Introduction to SQL and Database Management Techniques.
-
-# Reference
-
-This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+## Reference
 
 Default database in this document is "ap".
 
@@ -47,7 +41,7 @@ Other databases included in the simulation MySQL server:
 -   om
 -   ex
 
-# Data Type
+## Data Type
 
 5 Different temporal data types:
 
@@ -69,8 +63,8 @@ For example, all of the following displayed dates have the same stored values in
 All of these stored as 2028-8-15 in the database
 
 
-# Working with Time
-## Get Current Date and Time
+## Working with Time
+### Get Current Date and Time
 For more information about UTC (Coordinated Universal Time). 
 
 [UTC](https://docs.oracle.com/cd/E80921_01/html/esbc_ecz740_configuration/GUID-92C4E80E-E7C4-4D6D-8DE1-1AB69FA642FB.htm)
@@ -106,7 +100,7 @@ SELECT
   MONTHNAME(invoice_due_date)
 FROM invoices
 ```
-## Format Date and Time
+### Format Date and Time
 
 For all different time formatting details in MySQL, see [Oracle MySQL documentation](https://dev.mysql.com/doc/refman/8.4/en/date-and-time-functions.html#function_date-format) . 
 
@@ -118,10 +112,11 @@ SELECT
   DATE_FORMAT(invoice_due_date, '%b-%d-%Y') AS MMM_DD_YYYY
 FROM invoices
 ```
-## Date Time Calculation
+### Date Time Calculation
 ```{sql}
 SELECT
   invoice_due_date,
+  payment_date,
   DATE_ADD(invoice_due_date,INTERVAL 9 MONTH),
   DATE_SUB(invoice_due_date,INTERVAL 5 DAY),
   DATEDIFF(invoice_due_date, payment_date),
@@ -140,7 +135,7 @@ SELECT
   -- very useful to ensure the calculation results in seconds
   TIME_TO_SEC(NOW())
 ```
-## Search Date and Time
+### Search Date and Time
 
 General process:
 

@@ -32,9 +32,7 @@ opts_chunk$set(connection = conn)
 opts_chunk$set(max.print = 15)
 ```
 
-# Reference
-
-This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+## Reference
 
 Default database in this document is "ap".
 
@@ -43,7 +41,7 @@ Other databases included in the simulation MySQL server:
 -   om
 -   ex
 
-# Join Logic
+## Join Logic
 
 Illustration of common join types:
 
@@ -68,7 +66,7 @@ Some other join types:
 - Semi-join and Anti-join don't bring any additional fields from other tables.
 - Semi-join and Anti-join  are not covered in details here, because MySQL doesn't have native implementation for these join types.
 
-# Inner Join
+## Inner Join
 
 tables overview
 
@@ -180,7 +178,7 @@ FROM om.customers c INNER JOIN ex.employees e
    AND c.customer_last_name = e.last_name
 ```
 
-## A Somewhat Special Example - Self Join
+### A Somewhat Special Example - Self Join
 
 To make self-join work:
 
@@ -226,7 +224,7 @@ FROM vendors v1 INNER JOIN vendors v2
 ORDER BY v1.vendor_state, v1.vendor_city
 ```
 
-# Outer Join
+## Outer Join
 
 This includes:
 
@@ -254,7 +252,7 @@ FROM ex.projects
 LIMIT 10
 ```
 
-## Left Join
+### Left Join
 
 ```{sql}
 SELECT department_name, last_name, project_number
@@ -266,7 +264,7 @@ FROM ex.departments d
 ORDER BY department_name, last_name
 ```
 
-## Right Join
+### Right Join
 
 ```{sql}
 SELECT department_name, e.department_number, last_name
@@ -288,9 +286,9 @@ FROM ex.departments d
 ORDER BY department_name, last_name
 ```
 
-## Cross Join
+### Cross Join
 
-creates all combinations of rows from different tables.
+It creates all combinations of rows from different tables.
 
 tables overview:
 
@@ -315,7 +313,7 @@ FROM ex.departments CROSS JOIN ex.employees
 ORDER BY departments.department_number
 ```
 
-## Union
+### Union
 
 This is essentially stacking different intermediate table results one on top of another: 
 
@@ -342,7 +340,7 @@ WHERE invoice_date >= '2022-06-01'
 ORDER BY invoice_total DESC
 ```
 
-## Full Outer Join
+### Full Outer Join
 
 A combination of left outer join and right outer join.
 

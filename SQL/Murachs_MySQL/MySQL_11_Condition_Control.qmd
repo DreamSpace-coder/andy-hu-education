@@ -32,13 +32,7 @@ opts_chunk$set(connection = conn)
 opts_chunk$set(max.print = 15)
 ```
 
-# Purpose
-
-This document is created to better illustrate and teach SQL (MySQL) for students in my course: Introduction to SQL and Database Management Techniques.
-
-# Reference
-
-This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+## Reference
 
 Default database in this document is "ap".
 
@@ -47,13 +41,13 @@ Other databases included in the simulation MySQL server:
 -   om
 -   ex
 
-# Conditions
+## Conditions
 
 Quite often, you would like different things happen based on different values/when some logics return TRUE/FALSE. Each of these comparison/logic test is called a condition. After each condition, you need to specify what behaviour needs to happen.
 
 Take a look at the following example, when we need to create a friendly label for different repayment terms for invoices.
 
-## CASE...WHEN...THEN...END
+### CASE...WHEN...THEN...END
 ```{sql}
 SELECT invoice_number, terms_id,
     CASE terms_id
@@ -98,7 +92,7 @@ FROM invoices
 GROUP BY vendor_id
 ```
 
-## IF
+### IF
 
 This is quite similar to the Microsoft Excel IF function. IF is less versatile than CASE WHEN statement because it only examines 1 set of logics. However, IF is effective to write.
 
@@ -108,7 +102,7 @@ SELECT vendor_name,
   IF(vendor_city = 'Fresno', 'Yes', 'No') AS is_city_fresno
 FROM vendors
 ```
-## IFNULL
+### IFNULL
 
 The following allows to replace NULL values if there are any in the field. Very useful before you use the field in WHERE or HAVING, because they exclude NULL values when comparing.
 
@@ -130,7 +124,7 @@ FROM invoices
 ORDER BY payment_date
 LIMIT 15
 ```
-## COALESCE
+### COALESCE
 
 [COALESCE()](https://dev.mysql.com/doc/refman/8.4/en/comparison-operators.html#function_coalesce): Returns the first non-NULL value in the list, or NULL if there are no non-NULL values.
 

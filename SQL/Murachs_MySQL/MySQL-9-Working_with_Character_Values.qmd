@@ -1,5 +1,5 @@
 ---
-title: "Working with Character Values"
+title: "Working with Character Values" 
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 author: Jianyuan(Andy) Hu
 format: 
@@ -31,13 +31,8 @@ opts_chunk$set(connection = conn)
 # row.print works for R chucks, max.print works for SQL chucks
 opts_chunk$set(max.print = 15)
 ```
-# Purpose
 
-This document is created to better illustrate and teach SQL (MySQL) for students in my course: Introduction to SQL and Database Management Techniques.
-
-# Reference
-
-This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+## Reference
 
 Default database in this document is "ex".
 
@@ -50,17 +45,17 @@ This document is based on MySQL 8.4.
 
 MySQL references for string manipulation: https://dev.mysql.com/doc/refman/8.4/en/string-functions.html
 
-# Character Data Type
+## Character Data Type
 
-# Regular Expression {#regular-expression}
+## Regular Expression {#regular-expression}
 
 A regular expression (shortened as regex or regexp), sometimes referred to as rational expression, is a sequence of characters that specifies a match pattern in text.
 
 There is no universal guide for regex, as each implementation has their own dialoect/flavour. Here is a one that help you to get started. [MySQL Regex Syntax](https://dev.mysql.com/doc/refman/8.4/en/regexp.html#regexp-syntax)
 
-# String Extraction
+## String Extraction
 
-## SUBSTRING_INDEX
+### SUBSTRING_INDEX
 
 [SUBSTRING_INDEX()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_substring-index): Return a substring from a string before the specified number of occurrences of the delimiter.
 
@@ -71,7 +66,7 @@ SELECT emp_name,
 FROM string_sample
 ```
 
-## SUBSTRING
+### SUBSTRING
 
 [SUBSTRING()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_substring): Return the substring between 2 position indexes.
 
@@ -82,7 +77,7 @@ SELECT emp_name,
 FROM string_sample
 ```
 
-## REGEXP_SUBSTR
+### REGEXP_SUBSTR
 
 [REGEXP_SUBSTR()](https://dev.mysql.com/doc/refman/8.4/en/regexp.html#function_regexp-substr): It is the same as SUBSTRING, but use the regular expression to mathc instead of position index.
 
@@ -95,9 +90,9 @@ SELECT emp_name,
 FROM string_sample
 ```
 
-# String Mutation
+## String Mutation
 
-## LPAD/RPAD
+### LPAD/RPAD
 
 Make sure all text strings are extended to the same length, either:
 
@@ -128,7 +123,7 @@ FROM string_sample
 ORDER BY emp_id
 ```
 
-## LOWER/UPPER
+### LOWER/UPPER
 
 [LOWER()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_lower): Returns the string str with all characters changed to lowercase.
 
@@ -141,7 +136,7 @@ SELECT emp_name,
 FROM string_sample
 ```
 
-## REPLACE
+### REPLACE
 
 [REPLACE()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_replace): Replace occurrences of a specified string.
 
@@ -151,7 +146,7 @@ SELECT emp_name,
 FROM string_sample
 ```
 
-## REGEXP_REPLACE
+### REGEXP_REPLACE
 
 [REGEXP_REPLACE()](https://dev.mysql.com/doc/refman/8.4/en/regexp.html#function_regexp-replace): Similar as replace, but use regex to match and identify the part to replace.
 
@@ -162,7 +157,7 @@ SELECT emp_name,
 FROM string_sample
 ```
 
-## CONCAT
+### CONCAT
 
 [CONCAT()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_concat): Glue all argument strings together as 1 string.
 
@@ -183,9 +178,9 @@ SELECT emp_name,
 FROM string_sample
 ```
 
-# String Search
+## String Search
 
-## Partial Match (LIKE)
+### Partial Match (LIKE)
 
 ![MySQL Wildcards](Pictures/LIKE.png) [Source](https://www.w3schools.com/mysql/mysql_like.asp)
 
@@ -205,7 +200,7 @@ FROM string_sample
 WHERE emp_name LIKE '%b%' OR emp_name LIKE BINARY '%p%'
 ```
 
-## LOCATE
+### LOCATE
 
 [LOCATE()](https://dev.mysql.com/doc/refman/8.4/en/string-functions.html#function_locate): Return the position of the first occurrence of substring
 
@@ -216,7 +211,7 @@ SELECT emp_name,
 FROM string_sample
 ```
 
-## REGEXP_LIKE
+### REGEXP_LIKE
 
 You can also subset values based on regex pattern matching.
 

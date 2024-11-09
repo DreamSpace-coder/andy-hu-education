@@ -25,8 +25,6 @@ conn <- dbConnect(
   dsn = "Local Teaching MySQL84"
 )
 
-dbListTables(conn = conn)
-
 # "https://yihui.org/knitr/options/"
 library(knitr)
 opts_chunk$set(connection = conn)
@@ -34,9 +32,7 @@ opts_chunk$set(connection = conn)
 opts_chunk$set(max.print = 15)
 ```
 
-# Reference
-
-This document is based on Murach, J. (2023). Murach’s MySQL (4th Edition).
+## Reference
 
 Default database in this document is "ap".
 
@@ -45,36 +41,38 @@ Other databases included in the simulation MySQL server:
 -   om
 -   ex
 
+## Getting Started: SELECT and FROM
+
+The basic SQL query to get data from a table involving SELECT and FROM. 
+
+"*": indicates to select all columns from the table indicated by the FROM clause.
+
+To point at a particular table it follows the following notion: [catalog/database].[schema].[table]. For this database ([MySQL Configuring Catalog and Schema Support](https://dev.mysql.com/doc/connector-odbc/en/connector-odbc-usagenotes-functionality-catalog-schema.html)), it simplifies and reduces to [database].[table].
+
+The following example allows to return all columns from table "invoices", database "ap".
+
 ```{sql}
 SELECT * 
 FROM ap.invoices
 ```
 
+If you want to select particular columns just pass in particular column names after SELECT.
 
-```{sql}
-SELECT invoice_number, invoice_date, invoice_total
-FROM ap.invoices
-ORDER BY invoice_total DESC
-```
+### Calculated Columns with SELECT
 
+More tricks about SELECT will be introduced with the next several examples.
+
+In the following example, note that you can also create calculated columns by directly doing math among the columns. 
+
+- In addition AS keyword allows you to create an alias for that newly created column.
 
 ```{sql}
 SELECT invoice_id, invoice_total,
        credit_total + payment_total AS total_credits
 FROM ap.invoices
-WHERE invoice_id = 17
-```
-```{sql}
-SELECT invoice_number, invoice_date, invoice_total
-FROM ap.invoices
-WHERE invoice_date BETWEEN '2022-06-01' AND '2022-06-30'
-ORDER BY invoice_date
 ```
 
-```{sql}
-SELECT CONCAT(invoice_id, '-', vendor_id) AS combo
-FROM ap.invoices
-```
+Dividing is a serious business in SQL. Look at the following division math. 
 
 ```{sql}
 SELECT invoice_id, 
@@ -82,8 +80,101 @@ SELECT invoice_id,
        invoice_id DIV 3 AS integer_quotient,
        invoice_id % 3 AS remainder
 FROM ap.invoices
-ORDER BY invoice_id
 ```
+
+### Find Distinct Value(s): SELECT DISTINCT
+
+If you would like to see distinct values of different columns, add DISTINCT keyword after SELECT.
+
+```{sql}
+SELECT DISTINCT vendor_city, vendor_state
+FROM ap.vendors
+ORDER BY vendor_city
+```
+
+Here is what it looks like without DISTINCT:
+
+```{sql}
+SELECT vendor_city, vendor_state
+FROM ap.vendors
+ORDER BY vendor_city
+```
+
+## Show Selection of Rows: LIMIT
+
+What if you don't want to see all rows, just a few at the top? Or perhaps just a few after a particular number of rows?
+
+The following allows you to trim all rows down to 10 rows after the 17th row:
+
+```{sql}
+SELECT *
+FROM ap.vendors
+LIMIT 17, 10
+```
+
+## Sorting: ORDER BY
+
+ORDER BY: If you need to sort the outputs by values in a particular column.
+
+- If you need to sort by values in ascending order, you can specify ASC, but you can omit it, as that is the default behaviour
+- If you need to sort by values in descending order, you must specify with DESC
+
+```{sql}
+SELECT invoice_number, invoice_date, invoice_total
+FROM ap.invoices
+ORDER BY invoice_total DESC
+```
+
+## Subsetting: WHERE
+
+If you need to filter/subset the table by comparing some values, where clause is good to start. For a varity of all MySQL comparators, please see [MySQL Comparators](https://dev.mysql.com/doc/refman/8.4/en/comparison-operators.html).
+
+The following SQL chunk allows you to return for invoice with invoice_id equal to 17.
+
+```{sql}
+SELECT invoice_id, invoice_total,
+       credit_total + payment_total AS total_credits
+FROM ap.invoices
+WHERE invoice_id = 17
+```
+
+The following SQL chunk allows you to return for invoice with invoice_date in June 2022.
+
+Notice 2 things in the following code chuck: 
+- BETWEEN AND are good buddies, which allows you to specify a range.
+- to quote dates, you need to put them in single quotation marks.
+
+```{sql}
+SELECT invoice_number, invoice_date, invoice_total
+FROM ap.invoices
+WHERE invoice_date BETWEEN '2022-06-01' AND '2022-06-30'
+ORDER BY invoice_date
+```
+
+## Use Functions
+
+Functions are tools that help to perform complex calculations and data manipulation with ease. 
+
+There are two categories:
+
+- built-in (see [MySQL built-in functions](https://dev.mysql.com/doc/refman/8.4/en/built-in-function-reference.html))
+- custom
+
+Functions here are much like Excel functions: NAME(parameters...).
+
+### For Working with Character Values
+
+The following allows to combine values from invoice_id, dash sign, values from vendor_id value row by row.
+
+```{sql}
+SELECT CONCAT(invoice_id, '-', vendor_id) AS combo
+FROM ap.invoices
+```
+
+The following: 
+1. takes the first letter from the left of vendor_contact_first_name;
+2. takes the first letter from the left of vendor_contact_last_name;
+3. combines outouts from 1 and 2 above together row by row, which then relabel this new column as "initials"
 
 ```{sql}
 SELECT vendor_contact_first_name, vendor_contact_last_name,
@@ -92,14 +183,28 @@ SELECT vendor_contact_first_name, vendor_contact_last_name,
 FROM ap.vendors
 ```
 
+We will take a deeper dive with character values here: [Working with Character Values](MySQL-9-Working_with_Character_Values.qmd).
+
+### For Working with Time
+
+The following allows to format and reformat dates. 
+
 ```{sql}
 SELECT invoice_date,
   DATE_FORMAT(invoice_date, '%m/%d/%y') AS 'MM/DD/YY',
   DATE_FORMAT(invoice_date, '%e-%b-%Y') AS 'DD-Mon-YYYY',
+  -- this is equivalent to retrive day component of a date
   DATE_FORMAT(invoice_date, '%b') AS 'Mon'
 FROM ap.invoices
 ORDER BY invoice_date
 ```
+
+We will take a deeper dive with temporal values here: [Working with Time](MySQL-10-Working_with_Time.qmd).
+
+### For Working with Numeric Values
+
+The following will round numeric values to different decimal precisions.
+
 ```{sql}
 SELECT invoice_date, invoice_total,
        ROUND(invoice_total) AS nearest_dollar,
@@ -108,23 +213,7 @@ FROM ap.invoices
 ORDER BY invoice_date
 ```
 
-```{sql}
-SELECT DISTINCT vendor_city, vendor_state
-FROM ap.vendors
-ORDER BY vendor_city
-```
-
-```{sql}
-SELECT vendor_city, vendor_state
-FROM ap.vendors
-ORDER BY vendor_city
-```
-
-```{sql}
-SELECT *
-FROM ap.vendors
-LIMIT 17, 10
-```
+We will take a deeper dive with temporal values here: [Working with Numeric Data](MySQL-8-Working_with_Numeric_Data.qmd).
 
 ```{r}
 dbDisconnect(conn)
